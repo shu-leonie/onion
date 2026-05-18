@@ -37,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
         ]);
     })->name('outfit.save');
 
+    Route::post('/save-item', [ItemController::class, 'store']);
+
     Route::get('/settings', function () {
         return view('settings');
     })->name('settings');
