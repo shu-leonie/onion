@@ -59,5 +59,9 @@
         </div>
     </section>
 
+    <div class="mt-3">
+        @include('modals.upload-clothing')
+    </div>
+
 </main>
 @endsection

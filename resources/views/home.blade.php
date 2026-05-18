@@ -104,64 +104,63 @@
 
     <!--wetter blcok ist grad einfach nur platzhalter den müsstet ihr bitte noch dynamsich befüllen (je nach dem wie du die sachen in der db dann final benennst...-->
     <aside class="side-area info">
-    <div class="weather-desktop">
+        <div class="weather-desktop">
 
-        <div class="weather-city">
-            <i class="bi bi-geo-alt-fill"></i>
+            <div class="weather-city">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span id="locationText">
+                    {{ $location }}
+                </span>
+            </div>
 
-            <span id="locationText">
-                {{ $location }}
-            </span>
-        </div>
+            <div class="city-search">
+                <input
+                    type="text"
+                    id="cityInput"
+                    placeholder="Ort eingeben"
+                >
 
-    <div class="city-search">
+                <button
+                    class="weather-button"
+                    onclick="getWeatherByCity()"
+                >
+                    Ändern
+                </button>
+            </div>
+            <p id="cityError" class="city-error"></p>
 
-    <input
-        type="text"
-        id="cityInput"
-        placeholder="Ort eingeben"
-    >
-
-    <button
-        class="weather-button"
-        onclick="getWeatherByCity()"
-    >
-        Ändern
-    </button>
-
-    </div>
-    <p id="cityError" class="city-error"></p>
-
-    <button
-        class="location-link"
-            onclick="getLocation()"
-        >
-        <i class="bi bi-crosshair"></i>
-        Aktuellen Standort nutzen
-    </button>
-
-    <h2 class="display-temp" id="temperatureText">
-     {{ $weather['apparentTemperature'][$current_time] }}°
-    </h2>
-
-        <p class="condition" id="weatherInfoText">
-            windig ANPASSEN
-        </p>
-
-        <div class="weather-icons">
-            <i class="bi bi-sun-fill main-sun">ANPASSEN</i>
-            <i class="bi bi-cloud-fill overlap-cloud">ANPASSEN</i>
-        </div>
-
-        <div class="recommendation-box">
-            <p>
-                hier ist theoretisch noch platz für einen kleinen infotext
-                zum wetter oder so idk
+            <button
+                class="location-link"
+                    onclick="getLocation()"
+                >
+                <i class="bi bi-crosshair"></i>
+                Aktuellen Standort nutzen
+            </button>
+            <p id="locationInfoText">
+                {{ $weather['weather'][$current_time]['description'] }}
             </p>
-        </div>
 
-    </div>
-</aside>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="display-temp" id="temperatureText">
+                    {{ $weather['apparentTemperature'][$current_time] }}°
+                </h2>
+                <div class="weather-icons">
+                    <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}" class="weather-icon">
+                </div>
+            </div>
+            <p class="condition" id="weatherInfoText">
+                {{ $weather['weather'][$current_time]['description'] }}
+            </p>
+
+            <!--<div class="recommendation-box">
+                <p>
+                    hier ist theoretisch noch platz für einen kleinen infotext
+                    zum wetter oder so idk
+                </p>
+            </div>-->
+
+        </div>
+    </aside>
 
     //tags ZUM TESTEN
     <div class="grid" id="tags">
@@ -179,7 +178,7 @@
 </div>
 
 <div class="mt-3">
-  @include('modals.upload-clothing')
+  {{-- @include('modals.upload-clothing') --}}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -227,22 +226,22 @@ function error(error) {
 
     if (error.code === 1) {
 
-        document.getElementById("weatherInfoText").innerHTML =
+        document.getElementById("locationInfoText").innerHTML =
             "Standortzugriff wurde abgelehnt. Bitte Ort manuell eingeben.";
 
     } else if (error.code === 2) {
 
-        document.getElementById("weatherInfoText").innerHTML =
+        document.getElementById("locationInfoText").innerHTML =
             "Standort konnte nicht ermittelt werden.";
 
     } else if (error.code === 3) {
 
-        document.getElementById("weatherInfoText").innerHTML =
+        document.getElementById("locationInfoText").innerHTML =
             "Zeitüberschreitung beim Standortabruf.";
 
     } else {
 
-        document.getElementById("weatherInfoText").innerHTML =
+        document.getElementById("locationInfoText").innerHTML =
             "Unbekannter Standortfehler.";
 
     }
