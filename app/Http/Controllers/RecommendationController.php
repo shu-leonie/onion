@@ -36,6 +36,8 @@ class RecommendationController extends Controller
         $location = $GeocodingService->reverse($latitude, $longitude);
         if (!$location) {
             return response()->json(['error' => 'Standort konnte nicht bestimmt werden'], 500);
+        } else if(isset($location['error']) && $location['error'] === 'Unable to geocode') {
+            $location['display_name'] = "Es konnte kein Ortsname gefunden werden.";
         }
         $weather = $weatherService->getWeather($latitude, $longitude);
         if (!$weather) {
@@ -131,7 +133,7 @@ class RecommendationController extends Controller
 
         //ZUM TESTEN
         //$categories = ['head', 'upper', 'lower', 'feet']; 
-        $tags = [
+        /*$tags = [
             'sun',
             'rain',
             'cold',
@@ -141,7 +143,7 @@ class RecommendationController extends Controller
             'sport',
             'casual',
             'wind'
-        ];
+        ];*/
         /*$testRec = [
             'head' => [
                 [

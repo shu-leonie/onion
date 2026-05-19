@@ -162,19 +162,18 @@
         </div>
     </aside>
 
-    //tags ZUM TESTEN
     <div class="grid" id="tags">
-        @foreach($tags as $index => $tag)
+        @foreach($tags as $tag)
             <div>
-                <input type="checkbox" id="tag-{{ $index }}" value="{{ $tag }}"/>
-                <label for="tag-{{ $index }}">{{ $tag }}</label>
+                <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}"/>
+                <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
             </div>
         @endforeach
     </div>
 
 </main>
 <div class="mt-2">
-  @include('modals.add-tag')
+  {{-- @include('modals.add-tag') --}}
 </div>
 
 <div class="mt-3">
