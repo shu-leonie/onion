@@ -209,18 +209,8 @@ function success(position) {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
 
-    fetch(`/weather/location?lat=${lat}&lon=${lon}`)
-        .then(response => response.json())
-        .then(data => {
-
-            document.getElementById("locationText").innerHTML =
-                data.city;
-
-            document.getElementById("temperatureText").innerHTML =
-                data.weather.apparentTemperature[0] + "°";
-
-        });
-
+    window.location.href =
+        `/?latitude=${lat}&longitude=${lon}`;
 }
 
 function error(error) {
@@ -249,8 +239,6 @@ function error(error) {
 }
 
 
-getLocation();
-
 </script>
 
 <script>
@@ -267,6 +255,7 @@ async function getWeatherByCity() {
     );
 
     const data = await response.json();
+    console.log(data);
 
     if (!response.ok) {
 
@@ -274,19 +263,13 @@ async function getWeatherByCity() {
         data.error;
 
     return;
+    }
+    document.getElementById("cityError").innerHTML = "";
+
+    window.location.href =
+        `/?latitude=${data.latitude}&longitude=${data.longitude}`;
 }
 
-
-document.getElementById("cityError").innerHTML = "";
-
-    document.getElementById("locationText").innerHTML =
-        data.city;
-
-    document.getElementById("temperatureText").innerHTML =
-        data.weather.apparentTemperature[0] + "°";
-
-
-}
 </script>
 
 </body>
