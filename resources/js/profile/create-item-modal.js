@@ -12,7 +12,6 @@ let itemForUpload = {
     ] 
 }
 let currentPage = 0;
-let itemUploadSuccess = false;
 const imageInput = document.getElementById('clothingImage');
 
 const nextPageButton = document.getElementById('nextButton');
@@ -30,13 +29,11 @@ const tempDiv = document.getElementById('temp-range');
 const uvDiv = document.getElementById('uv-range');
 const cloudDiv = document.getElementById('cloud-range');
 
+const errorDiv = document.getElementById('upload-modal-error');
+
 document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('imagePreview');
     const uploadTagSelection = document.getElementById('uploadTagSelection');
-    const tagsData = document.body.dataset.tags;
-    if (tagsData) {
-        currentTags = JSON.parse(tagsData);
-    }
 
     if (imageInput && imagePreview) {
         imageInput.addEventListener('change', function() {
@@ -53,9 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (uploadTagSelection && currentTags.length > 0) {
-        currentTags.forEach((tag, index) => {
-            addNewTagToItemModal(tag, index);
+    if (uploadTagSelection && tags.length > 0) {
+        window.tags.forEach((tag) => {
+            addNewTagToItemModal(tag.name, tag.id);
         });
     }
 
@@ -79,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     bindRangeOutput("cloud-cover-range", "rangeValue-clouds");
 })
 
-function addNewTagToItemModal(name, tagId) {
+export function addNewTagToItemModal(name, tagId) {
     const uploadTagSelection = document.getElementById('uploadTagSelection');
     const tagCheckbox = document.createElement('div');
     tagCheckbox.className = 'form-check';
@@ -91,22 +88,32 @@ function addNewTagToItemModal(name, tagId) {
     const newCheckboxElement = uploadTagSelection.querySelector(`#upload-tag-${tagId}`);
     newCheckboxElement.addEventListener("change", () => {
         if (newCheckboxElement.checked) {
-            itemForUpload.tags.push(index);
+            itemForUpload.tags.push(tagId);
         } else {
-            const i = itemForUploaditemForUpload.tags.indexOf(index)
-            if (i > -1) itemForUploaditemForUpload.tags.splice(i, 1)
+            const i = itemForUploa.tags.indexOf(tagId)
+            if (i > -1) itemForUpload.tags.splice(i, 1)
         }
     });
 }
 
 function nextPage() {
-    if(currentPage === 0) {
-        const itemName = document.getElementById('clothingName');
-        const itemCategory = document.getElementById('clothingCategory');
-        const category = categories.find(category => category.id === parseInt(itemCategory.value));
+    const itemName = document.getElementById('clothingName').value;
+    const itemCategory = document.getElementById('clothingCategory').value;
+    const category = window.categories.find(category => category.id === parseInt(itemCategory));
 
-        itemForUpload.name = itemName.value;
-        itemForUpload.category = parseInt(itemCategory.value);
+    if(!imageInput.files || !imageInput.files[0] || itemName == '' || !category) {
+        errorDiv.innerHTML = 'Es müssen zuerst alle Felder ausgefüllt werden.';
+        errorDiv.classList.remove('d-none');
+        
+        return;
+    }
+
+    if(currentPage === 0) {
+        errorDiv.classList.add('d-none');
+        errorDiv.innerHTML = '';
+
+        itemForUpload.name = itemName;
+        itemForUpload.category = parseInt(itemCategory);
 
         if(itemForUpload.category === 10) { //Sonnenbrille
             cloudDiv.classList.remove("d-none");
@@ -141,10 +148,11 @@ function previousPage() {
 }
 
 function uploadItem() {
-    const category = categories.find(category => category.id === itemForUpload.category);
+    const category = window.categories.find(category => category.id === itemForUpload.category);
+    let itemUploadSuccess = false;
 
     if(itemForUpload.category === 10) { //Sonnenbrille
-        itemForUpload.cloud_cover_threshold = cloudDiv.getElementById('cloud-cover-range').value;
+        itemForUpload.cloud_cover_threshold = cloudDiv.querySelector('#cloud-cover-range').value;
 
         itemForUpload.min_temperature = null;
         itemForUpload.max_temperature = null;
@@ -165,15 +173,15 @@ function uploadItem() {
         } else {
             itemForUpload.is_waterproof = waterproofnessSwitch.checked;
         }
-        itemForUpload.min_uv_index = tempDiv.querySelector("#temp-min").value;
-        itemForUpload.min_uv_index = tempDiv.querySelector("#temp-max").value;
+        itemForUpload.min_temperature = tempDiv.querySelector("#temp-min").value;
+        itemForUpload.max_temperature = tempDiv.querySelector("#temp-max").value;
 
         itemForUpload.min_uv_index = null;
         itemForUpload.max_uv_index = null;
         itemForUpload.cloud_cover_threshold = null;
     } else { //Nicht wasserfest
-        itemForUpload.min_uv_index = tempDiv.querySelector("#temp-min").value;
-        itemForUpload.min_uv_index = tempDiv.querySelector("#temp-max").value;
+        itemForUpload.min_temperature = tempDiv.querySelector("#temp-min").value;
+        itemForUpload.max_temperature = tempDiv.querySelector("#temp-max").value;
 
         itemForUpload.min_uv_index = null;
         itemForUpload.max_uv_index = null;
@@ -197,25 +205,23 @@ function uploadItem() {
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        itemUploadSuccess = data.success;
+        if(data.success) {
+            const modalEl = document.getElementById('uploadModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+            //KLEIDUNGSSTÜCK ÜBER FUNKTION ZU ITEMS AUF DER SEITE HINZUFÜGEN?
+            modal.hide();
+            generalAttributesDiv.classList.remove("d-none");
+            specialAttributesDiv.classList.add("d-none");
+            previousPageButton.classList.add("d-none");
+            submitButton.classList.add("d-none");
+            nextPageButton.classList.remove("d-none");
+            currentPage = 0;
+            hideAllAttributes();
+            resetAllAttributes();
+        }
     });
 
-
-    if(itemUploadSuccess) {
-        const modalEl = document.getElementById('uploadModal');
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-
-        //KLEIDUNGSSTÜCK ÜBER FUNKTION ZU ITEMS AUF DER SEITE HINZUFÜGEN?
-        modal.hide();
-        generalAttributesDiv.classList.remove("d-none");
-        specialAttributesDiv.classList.add("d-none");
-        previousPageButton.classList.add("d-none");
-        submitButton.classList.add("d-none");
-        nextPageButton.classList.remove("d-none");
-        currentPage = 0;
-        hideAllAttributes();
-        resetAllAttributes();
-    }
 }
 
 function hideAllAttributes() {

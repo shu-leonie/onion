@@ -13,6 +13,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div class="alert alert-danger d-none" role="alert" id="upload-modal-error">
+
+        </div>
         <div id="general-attributes">
           <div class="mb-3">
             <label for="clothingImage" class="form-label">Bild auswählen</label>

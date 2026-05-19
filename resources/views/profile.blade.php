@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 <script>
-    const items = @json($items);
-    const tags = @json($tags);
-    const categories = @json($categories);
-    const unreviewedOutfitsByDay = @json($unreviewedOutfitsByDay);
+    window.items = @json($items);
+    window.tags = @json($tags);
+    window.categories = @json($categories);
+    window.unreviewedOutfitsByDay = @json($unreviewedOutfitsByDay);
 </script>
 
 @section('content')
