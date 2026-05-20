@@ -35,19 +35,22 @@ class TagController extends Controller
         ]);
 
         try {
-            Tag::create([
+            $tag=Tag::create([
                 'name' => $request->name,
                 'user_id' => $request->user()->id,
             ]);
 
-            $status = 'success';
-            $message = 'Der Tag wurde erfolgreich gespeichert.';
+            return response()->json([
+                'status' => 'success',
+                'tag' => $tag,
+            ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern des Tags ist ein Fehler aufgetreten.';
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Beim Speichern des Tags ist ein Fehler aufgetreten.'
+            ], 500);
         }
 
-        return redirect()->route('tags.index')->with($status, $message);
     }
 
     /**
