@@ -38,3 +38,4 @@
 <script>
   window.tags=@json($tags);
 </script>
+@vite(['resources/js/profile/tag-modal.js'])

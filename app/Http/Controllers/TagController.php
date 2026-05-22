@@ -75,14 +75,17 @@ class TagController extends Controller
                 'name' => $request->name,
             ]);
 
-            $status = 'success';
-            $message = 'Die Änderungen wurden erfolgreich gespeichert.';
+            return response()->json([
+                'status' => 'success',
+                'tag' => $tag,
+            ]);
+            
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.'
+            ], 500);
         }
-
-        return redirect()->route('tags.index')->with($status, $message);
     }
 
     /**
@@ -92,13 +95,15 @@ class TagController extends Controller
     {
         try {
             $tag->delete();
-            $status = 'success';
-            $message = 'Der Tag wurde erfolgreich gelöscht.';
+            return response()->json([
+            'status' => 'success',
+            'message' => 'Der Tag wurde erfolgreich gelöscht.'
+        ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Löschen des Tags ist ein Fehler aufgetreten.';
+           return response()->json([
+            'status' => 'error',
+            'message' => 'Beim Löschen des Tags ist ein Fehler aufgetreten.'
+        ], 500);
         }
-
-        return redirect()->route('tags.index')->with($status, $message);
     }
 }
