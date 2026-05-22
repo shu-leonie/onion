@@ -62,6 +62,9 @@
     <div class="mt-3">
         @include('modals.upload-clothing')
     </div>
+    <div class="mt-3">
+        @include('modals.add-tag')
+    </div>
 
 </main>
 @endsection

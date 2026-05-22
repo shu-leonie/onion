@@ -370,6 +370,16 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     color: #7a2e2e;
 }
 
+.tag-delete-button {
+    border: none;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+}
+
 .weather-icon {
     width: 80px;
     height: 80px;

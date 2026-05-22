@@ -1,3 +1,6 @@
+<head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
 <!-- Button für das Tag-Modal -->
 <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addTagModal">
   <i class="bi bi-tag"></i> TAG HINZUFÜGEN
@@ -16,16 +19,12 @@
         <div class="mb-3">
           <label for="newTag" class="form-label">Tag-Name</label>
           <input type="text" class="form-control" id="newTag" placeholder="z. B. 'Sommer'" required>
+          <p id="tagError" class="text-danger mt-2"></p>
         </div>
         <!-- Liste der bereits hinzugefügten Tags -->
         <div id="tagPreview" class="mt-3">
           <p class="text-muted">Aktuelle Tags:</p>
-          <div id="tagList" class="d-flex flex-wrap gap-2">
-           
-            @foreach($tags as $tag)
-              <span class="badge bg-primary me-2">{{ $tag }}</span>
-            @endforeach
-          </div>
+          <div id="tagList" class="d-flex flex-wrap gap-2"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -35,3 +34,8 @@
     </div>
   </div>
 </div>
+
+<script>
+  window.tags=@json($tags);
+</script>
+@vite(['resources/js/profile/tag-modal.js'])
