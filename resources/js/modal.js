@@ -78,36 +78,4 @@ document.addEventListener('DOMContentLoaded', function() {
       
     });
   }
-
-  // Bildvorschau für das Upload-Modal
-  const imageInput = document.getElementById('clothingImage');
-  const imagePreview = document.getElementById('imagePreview');
-
-  if (imageInput && imagePreview) {
-    imageInput.addEventListener('change', function() {
-      if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          imagePreview.src = e.target.result;
-          imagePreview.classList.remove('d-none');
-        };
-        reader.readAsDataURL(this.files[0]);
-      } else {
-        imagePreview.classList.add('d-none');
-      }
-    });
-  }
-
-
-  if (uploadTagSelection && currentTags.length > 0) {
-    currentTags.forEach((tag, index) => {
-      const tagCheckbox = document.createElement('div');
-      tagCheckbox.className = 'form-check';
-      tagCheckbox.innerHTML = `
-        <input class="form-check-input" type="checkbox" name="tags[]" value="${tag}" id="upload-tag-${index}">
-        <label class="form-check-label" for="upload-tag-${index}">${tag}</label>
-      `;
-      uploadTagSelection.appendChild(tagCheckbox);
-    });
-  }
 });

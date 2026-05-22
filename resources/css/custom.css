@@ -379,3 +379,9 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     padding: 0 2px;
     line-height: 1;
 }
+
+.weather-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
