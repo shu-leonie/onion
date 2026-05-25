@@ -45,8 +45,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('settings');
 });
 
-Route::resource('items', ItemController::class);
+Route::resource('items', ItemController::class)->middleware('auth');
 Route::resource('categories', CategoryController::class);
 Route::resource('tags', TagController::class)->except(['show'])->middleware('auth');
 
 Route::put('/user/offset', [UserController::class, 'updateOffset'])->name('user.updateOffset');
+Route::post('/selected-outfits/add/{item}', [SelectedOutfitController::class, 'addItem'])->name('selected-outfits.add')->middleware('auth');
+Route::put('/selected-outfits/{selectedOutfit}/save-review', [SelectedOutfitController::class, 'saveReview'])->name('selected-outfits.save-review')->middleware('auth');
