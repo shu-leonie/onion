@@ -64,15 +64,20 @@ class ItemController extends Controller
             $item = Item::create($validated);
             $item->tags()->attach($tags);
 
-            $status = 'success';
-            $message = 'Das Kleidungsstück wurde erfolgreich gespeichert.';
+            return response()->json([
+                'success' => true,
+                'message' => 'Das Kleidungsstück wurde erfolgreich gespeichert.',
+                'item' => $item,
+                'item_id' => $item->id,
+            ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern des Kleidungsstücks ist ein Fehler aufgetreten.';
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Speichern des Kleidungsstücks ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
 
-        return redirect()->route('items.index')->with($status, $message)
-            ->with('item_id', $item->id);
     }
 
     /**
