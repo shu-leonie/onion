@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 tagError.textContent = '';
+                window.tags = currentTags;
                 renderTags();
             });
 
@@ -128,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentTags.push(savedTag);
             }
 
+            window.tags = currentTags;
             renderTags();
 
             tagError.textContent = '';
