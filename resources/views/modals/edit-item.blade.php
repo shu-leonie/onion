@@ -25,16 +25,6 @@
             <label class="form-label">Tags auswählen</label>
             <div id="editItemTagSelection" class="d-flex flex-wrap gap-2"></div>
           </div>
-
-          <div class="mt-3">
-            <label for="editItemCategory" class="form-label">Kategorie</label>
-            <select class="form-select" id="editItemCategory" disabled>
-              <option selected>Kategorie bleibt unverändert</option>
-              @foreach($categories as $cat)
-                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-              @endforeach
-            </select>
-          </div>
         </div>
 
         <div id="editItemSpecialAttributes">

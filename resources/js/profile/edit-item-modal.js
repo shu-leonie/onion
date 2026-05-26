@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
     connectRangeValue('editItemCloudCoverRange', 'editItemRangeValueClouds');
 
     const editItemSubmitButton = document.getElementById('editItemSubmitButton');
+    const editItemModalError = document.getElementById('editItemModalError');
 
     if (editItemSubmitButton) {
 
@@ -205,13 +206,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
 
-            if (!response.ok || data.status === 'error') {
-                console.log(data.message || 'Fehler beim Speichern');
-                return;
-            }
+           if (!response.ok || data.status === 'error') {
+
+            editItemModalError.textContent = 'Kleidungsstück konnte nicht gespeichert werden.';
+
+            editItemModalError.classList.remove('d-none');
+
+            return;
+           }
 
             const modalElement = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalElement);
+
+            editItemModalError.textContent = '';
+
+            editItemModalError.classList.add('d-none');
 
             modal.hide();
         });
