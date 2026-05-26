@@ -6,10 +6,8 @@ let itemForUpload = {
     min_uv_index: null,
     max_uv_index: null,
     cloud_cover_threshold: null,
-    category: null,
-    tags:  [
-        null
-    ] 
+    category_id: null,
+    tags:  [] 
 }
 let currentPage = 0;
 const imageInput = document.getElementById('clothingImage');
@@ -31,6 +29,8 @@ const cloudDiv = document.getElementById('cloud-range');
 
 const errorDiv = document.getElementById('upload-modal-error');
 
+const modalEl = document.getElementById('uploadModal');
+
 document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('imagePreview');
     const uploadTagSelection = document.getElementById('uploadTagSelection');
@@ -47,12 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 imagePreview.classList.add('d-none');
             }
-        });
-    }
-
-    if (uploadTagSelection && tags.length > 0) {
-        window.tags.forEach((tag) => {
-            addNewTagToItemModal(tag.name, tag.id);
         });
     }
 
@@ -75,6 +69,16 @@ document.addEventListener('DOMContentLoaded', function() {
     bindRangeOutput("uv-max", "rangeValue-max-uv");
     bindRangeOutput("cloud-cover-range", "rangeValue-clouds");
 })
+
+modalEl.addEventListener('show.bs.modal', function () {
+    const uploadTagSelection = document.getElementById('uploadTagSelection');
+    if (uploadTagSelection && tags.length > 0) {
+        uploadTagSelection.innerHTML = '';
+        tags.forEach((tag) => {
+            addNewTagToItemModal(tag.name, tag.id);
+        });
+    }
+});
 
 export function addNewTagToItemModal(name, tagId) {
     const uploadTagSelection = document.getElementById('uploadTagSelection');
@@ -113,11 +117,11 @@ function nextPage() {
         errorDiv.innerHTML = '';
 
         itemForUpload.name = itemName;
-        itemForUpload.category = parseInt(itemCategory);
+        itemForUpload.category_id = parseInt(itemCategory);
 
-        if(itemForUpload.category === 10) { //Sonnenbrille
+        if(itemForUpload.category_id === 10) { //Sonnenbrille
             cloudDiv.classList.remove("d-none");
-        } else if(itemForUpload.category === 11) { //Sonnencreme
+        } else if(itemForUpload.category_id === 11) { //Sonnencreme
             uvDiv.classList.remove("d-none");
         } else if(category.is_impacted_by_rain === 1) { //Wasserfest
             tempDiv.classList.remove("d-none");
@@ -148,10 +152,10 @@ function previousPage() {
 }
 
 function uploadItem() {
-    const category = window.categories.find(category => category.id === itemForUpload.category);
+    const category = window.categories.find(category => category.id === itemForUpload.category_id);
     let itemUploadSuccess = false;
 
-    if(itemForUpload.category === 10) { //Sonnenbrille
+    if(itemForUpload.category_id === 10) { //Sonnenbrille
         itemForUpload.cloud_cover_threshold = cloudDiv.querySelector('#cloud-cover-range').value;
 
         itemForUpload.min_temperature = null;
@@ -159,7 +163,7 @@ function uploadItem() {
         itemForUpload.min_uv_index = null;
         itemForUpload.max_uv_index = null;
         itemForUpload.is_waterproof = null;
-    } else if(itemForUpload.category === 11) { //Sonnencreme
+    } else if(itemForUpload.category_id === 11) { //Sonnencreme
         itemForUpload.min_uv_index = uvDiv.querySelector("#uv-min").value;
         itemForUpload.min_uv_index = uvDiv.querySelector("#uv-max").value;
 
@@ -190,12 +194,23 @@ function uploadItem() {
     }
 
     const formData = new FormData();
-    formData.append('image', imageInput.files[0]);
-    formData.append('data', JSON.stringify(itemForUpload));
+    formData.append('name', itemForUpload.name ?? '');
+    formData.append('category_id', itemForUpload.category_id ?? '');
+    formData.append('is_waterproof', itemForUpload.is_waterproof ? 1 : 0);
+    if (imageInput.files[0]) formData.append('filepath', imageInput.files[0]);
+    if (itemForUpload.min_temperature !== null) formData.append('min_temperature', itemForUpload.min_temperature);
+    if (itemForUpload.max_temperature !== null) formData.append('max_temperature', itemForUpload.max_temperature);
+    if (itemForUpload.min_uv_index !== null) formData.append('min_uv_index', itemForUpload.min_uv_index);
+    if (itemForUpload.max_uv_index !== null) formData.append('max_uv_index', itemForUpload.max_uv_index);
+    if (itemForUpload.cloud_cover_threshold !== null) formData.append('cloud_cover_threshold', itemForUpload.cloud_cover_threshold);
+    itemForUpload.tags.forEach(tag => {
+        formData.append('tags[]', tag);
+    });
 
     fetch('/save-item', {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': document
                 .querySelector('meta[name="csrf-token"]')
                 .getAttribute('content')
@@ -206,6 +221,8 @@ function uploadItem() {
     .then(data => {
         console.log(data);
         if(data.success) {
+            errorDiv.innerHTML = '';
+            errorDiv.classList.add('d-none');
             const modalEl = document.getElementById('uploadModal');
             const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
@@ -219,6 +236,9 @@ function uploadItem() {
             currentPage = 0;
             hideAllAttributes();
             resetAllAttributes();
+        } else {
+            errorDiv.innerHTML = data.message;
+            errorDiv.classList.remove('d-none');
         }
     });
 
