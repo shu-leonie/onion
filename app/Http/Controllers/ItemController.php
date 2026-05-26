@@ -134,15 +134,28 @@ class ItemController extends Controller
 
             $item->update($validated);
             $item->tags()->sync($tags);
-
             $status = 'success';
             $message = 'Die Änderungen wurden erfolgreich gespeichert.';
+
+        if ($request->expectsJson()) {
+            return response()->json([
+            'status' => $status,
+            'item' => $item,
+            'message' => $message,
+        ], $status === 'success' ? 200 : 500);
+}
+
         } catch (Exception $e) {
             $status = 'error';
             $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => $status,
+                    'message' => $message,
+                ], 500);
+            }
         }
 
-        return redirect()->route('items.index')->with($status, $message);
     }
 
     /**
@@ -164,6 +177,42 @@ class ItemController extends Controller
         }
 
         return redirect(route('items.index'))->with($status, $message);
+    }
+
+    /**
+     * Validation
+     */
+    private function validate(Request $request)
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'array',
+            'tags.*' => 'exists:tags,id',
+            'is_waterproof' => 'nullable|boolean',
+            'min_temperature' => 'nullable|integer',
+            'max_temperature' => 'nullable|integer',
+            'min_uv_index' => 'nullable|integer',
+            'max_uv_index' => 'nullable|integer',
+            'cloud_cover_threshold' => 'nullable|integer|between:0,100',
+            'filepath' => $request->isMethod('post')
+            ? 'required|file|image|max:2048'
+            : 'sometimes|file|image|max:2048',
+        ]);
+    }
+
+    /**
+     * save image
+     */
+    private function saveImage($image)
+    {
+        $filename = Carbon::now()->format('Y-m-d-H_i_s').'_'.$image->getClientOriginalName();
+        // clean image name
+        $filename = preg_replace('~[^\w\d\-_\(\)\[\]\.]~', '', $filename);
+        // save image
+        $filepath = $image->storeAs('images/items', $filename, 'public');
+
+        return $filepath;
     }
 
     /**

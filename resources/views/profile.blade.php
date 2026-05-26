@@ -65,6 +65,10 @@
     <div class="mt-3">
         @include('modals.add-tag')
     </div>
+    <div class="mt-3">
+        @include('modals.edit-item')
+    </div>
+    
 
 </main>
 @endsection
