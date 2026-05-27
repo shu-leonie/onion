@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const cloudCoverSampleImage = cloudDiv.querySelector('img');
+    const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
+    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+
     nextPageButton.addEventListener("click", nextPage);
     previousPageButton.addEventListener("click", previousPage);
     submitButton.addEventListener("click", uploadItem);
@@ -286,15 +291,32 @@ function resetAllAttributes() {
 }
 
 function bindRangeOutput(rangeId, outputId) {
-  const range = document.getElementById(rangeId);
-  const output = document.getElementById(outputId);
+    const range = document.getElementById(rangeId);
+    const output = document.getElementById(outputId);
 
-  if (!range || !output) return;
+    if (!range || !output) return;
 
-  const update = () => {
-    output.textContent = range.value;
-  };
+    const update = () => {
+        output.value = range.value;
+    };
+    const update2 = () => {
+        const max = Number(output.max);
+        const min = Number(output.min);
+        const value = Number(output.value);
 
-  range.addEventListener("input", update);
-  update(); // initialer Wert beim Laden
+        if(value > max) output.value = max;
+        if(value < min) output.value = min;
+        range.value = output.value;
+        calculateCloudCoverImage();
+    };
+
+    range.addEventListener("input", update);
+    output.addEventListener("input", update2);
+    update(); // initialer Wert beim Laden
+}
+
+function calculateCloudCoverImage() {
+    const cloudCoverSampleImage = cloudDiv.querySelector('img');
+    const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
+    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
 }

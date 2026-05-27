@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div id="editItemSpecialAttributes">
+        <div class="mt-3" id="editItemSpecialAttributes">
 
           <div id="editItemWaterproofness">
             <br>
@@ -50,44 +50,48 @@
           <div id="editItemTempRange">
             <br>
 
-            <div id="editItemMinTempGroup">
+            <div class="d-flex flex-column" id="editItemMinTempGroup">
               <label for="editItemTempMin" class="form-label">Minimale Temperatur</label>
               <input type="range" class="form-range" min="-90" max="60" value="0" id="editItemTempMin">
-              <output for="editItemTempMin" id="editItemRangeValueMinTemp"></output>
+              <input type="number" class="output-value" min="-90" max="60" value="0" id="editItemRangeValueMinTemp">
             </div>
 
             <br>
 
-            <div id="editItemMaxTempGroup">
+            <div class="d-flex flex-column" id="editItemMaxTempGroup">
               <label for="editItemTempMax" class="form-label">Maximale Temperatur</label>
               <input type="range" class="form-range" min="-90" max="60" value="10" id="editItemTempMax">
-              <output for="editItemTempMax" id="editItemRangeValueMaxTemp"></output>
+              <input type="number" class="output-value" min="-90" max="60" value="0" id="editItemRangeValueMaxTemp">
             </div>
           </div>
 
           <div id="editItemUvRange">
             <br>
 
-            <div id="editItemMinUvGroup">
+            <div class="d-flex flex-column" id="editItemMinUvGroup">
               <label for="editItemUvMin" class="form-label">Minimaler UV-Index</label>
               <input type="range" class="form-range" min="0" max="60" value="1" id="editItemUvMin">
-              <output for="editItemUvMin" id="editItemRangeValueMinUv"></output>
+              <input type="number" class="output-value" min="0" max="60" value="1" id="editItemRangeValueMinUv">
             </div>
 
             <br>
 
-            <div id="editItemMaxUvGroup">
+            <div class="d-flex flex-column" id="editItemMaxUvGroup">
               <label for="editItemUvMax" class="form-label">Maximaler UV-Index</label>
               <input type="range" class="form-range" min="0" max="60" value="7" id="editItemUvMax">
-              <output for="editItemUvMax" id="editItemRangeValueMaxUv"></output>
+              <input type="number" class="output-value" min="0" max="60" value="1" id="editItemRangeValueMaxUv">
             </div>
           </div>
 
-          <div id="editItemCloudRange">
-            <br>
-            <label for="editItemCloudCoverRange" class="form-label">Cloud-Cover-Threshold</label>
-            <input type="range" class="form-range" min="0" max="100" value="50" id="editItemCloudCoverRange">
-            <output for="editItemCloudCoverRange" id="editItemRangeValueClouds"></output>
+          <div id="editItemCloudRange" class="d-none">
+            <div class="m-2 mb-5 d-flex justify-content-center">
+              <img src="" alt="Cloud coverage example"/>
+            </div>
+            <div class="d-flex flex-column">
+              <label for="editItemCloudCoverRange" class="form-label">Bis zu welcher Bewölkung soll die Sonnenbrille empfohlen werden?</label>
+              <input type="range" class="form-range" min="0" max="100" value="50" id="editItemCloudCoverRange">
+              <input type="number" class="output-value" min="0" max="100" value="50" id="editItemRangeValueClouds">
+            </div>
           </div>
 
         </div>
