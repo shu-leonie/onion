@@ -50,8 +50,7 @@
         <div id="special-attributes" class="d-none">
 
           <div id="waterproofness" class="d-none">
-            <br>
-            <div class="form-check" id="is-waterproof">
+            <div class="form-check mt-3" id="is-waterproof">
               <input class="form-check-input" type="checkbox" value="" id="is-waterproof-switch">
               <label class="form-check-label" for="is-waterproof-switch">Gegenstand ist Wasserfest</label>
             </div>
@@ -62,40 +61,40 @@
           </div>
 
           <div id="temp-range" class="d-none">
-            <br>
-            <div>
+            <div class="mt-3 d-flex flex-column">
               <label for="temp-min" class="form-label">Minimale Temperatur</label>
               <input type="range" class="form-range" min="-90" max="60" value="0" id="temp-min">
-              <output for="temp-min" id="rangeValue-min-temp"></output>
+              <input type="number" class="output-value" min="-90" max="60" value="0" id="rangeValue-min-temp">
             </div>
-            <br>
-            <div>
+            <div class="mt-3 d-flex flex-column">
               <label for="temp-max" class="form-label">Maximale Temperatur</label>
               <input type="range" class="form-range" min="-90" max="60" value="10" id="temp-max">
-              <output for="temp-max" id="rangeValue-max-temp"></output>
+              <input type="number" class="output-value" min="-90" max="60" value="10" id="rangeValue-max-temp">
             </div>
           </div>
           
           <div id="uv-range" class="d-none">
-            <br>
-            <div>
+            <div class="mt-3 d-flex flex-column">
               <label for="uv-min" class="form-label">Minimale UV-Index</label>
               <input type="range" class="form-range" min="0" max="60" value="1" id="uv-min">
-              <output for="uv-min" id="rangeValue-min-uv"></output>
+              <input type="number" class="output-value" min="0" max="60" value="1" id="rangeValue-min-uv">
             </div>
-            <br>
-            <div>
+            <div class="mt-3 d-flex flex-column">
               <label for="uv-max" class="form-label">Maximale UV-Index</label>
               <input type="range" class="form-range" min="0" max="60" value="7" id="uv-max">
-              <output for="uv-max" id="rangeValue-max-uv"></output>
+              <input type="number" class="output-value" min="0" max="60" value="7" id="rangeValue-max-uv">
             </div>
           </div>
 
           <div id="cloud-range" class="d-none">
-            <br>
-            <label for="cloud-cover-range" class="form-label">Bis zu welcher Bewölkung soll die Sonnenbrille empfohlen werden?</label>
-            <input type="range" class="form-range" min="0" max="100" value="50" id="cloud-cover-range">
-            <output for="cloud-cover-range" id="rangeValue-clouds"></output>
+            <div class="m-2 mb-5 d-flex justify-content-center">
+              <img src="" alt="Cloud coverage example"/>
+            </div>
+            <div class="d-flex flex-column">
+              <label for="cloud-cover-range" class="form-label">Bis zu welcher Bewölkung soll die Sonnenbrille empfohlen werden?</label>
+              <input type="range" class="form-range" min="0" max="100" value="50" id="cloud-cover-range">
+              <input type="number" class="output-value" min="0" max="100" value="50" id="rangeValue-clouds">
+            </div>
           </div>
 
         </div>
@@ -109,6 +108,7 @@
     </div>
   </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @vite(['resources/js/profile/create-item-modal.js'])
