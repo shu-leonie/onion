@@ -196,8 +196,8 @@ class ItemController extends Controller
             'max_uv_index' => 'nullable|integer',
             'cloud_cover_threshold' => 'nullable|integer|between:0,100',
             'filepath' => $request->isMethod('post')
-            ? 'required|file|image|max:2048'
-            : 'sometimes|file|image|max:2048',
+            ? 'required|file|image|max:10240'
+            : 'sometimes|file|image|max:10240',
         ]);
     }
 

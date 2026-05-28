@@ -3,58 +3,36 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\Item;
-use App\Models\Category;
-use App\Models\Tag;
 use App\Models\SelectedOutfit;
 
 class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        $date = $request->input('date');
-        $items = SelectedOutfit::with([
-                'item.category',
-                'item.tags'
-            ])
+        $allItems = SelectedOutfit::with(['item.category', 'item.tags'])
             ->where('user_id', auth()->id())
-            ->where('has_been_reviewed', false)
-            ->whereDate('created_at', $date)
-            ->get()
-            ->map(function ($entry) {
-                return [
-                    'outfit_entry_id' => $entry->id,
-                    'outfit_date' => $entry->created_at->toDateString(),
+            ->latest() 
+            ->get();
 
-                    ...$entry->item->toArray()
-                ];
-            });
-         /* Sollte theoretisch sowas liefern
-        [
-            {
-                "outfit_entry_id": 15,
-                "outfit_date": "2026-05-15",
+        $unreviewedItems = $allItems->filter(function($entry) {
+            return empty($entry->has_been_reviewed);
+        });
 
-                "id": 12,
-                "name": "Winterjacke",
-                "filepath": "/img/jacket.jpg",
-
-                "category": {
-                    ...
-                },
-
-                "tags": [
-                    ...
-                ]
-            }
-        ]
-        */
-
-        if ($items->isEmpty()) {
+        if ($unreviewedItems->isEmpty()) {
             return view('error', ['error_message' => "Anscheinend gibt es hier nichts zu reviewen :)"]);
-        } else {
-            return view('review', ['items' => $items]);
         }
-    }
 
+        $latestTime = $unreviewedItems->first()->created_at;
+
+        $items = $unreviewedItems->filter(function($entry) use ($latestTime) {
+            return $entry->created_at->diffInSeconds($latestTime) <= 5 && $entry->item !== null;
+        })->map(function ($entry) {
+            return array_merge([
+                'outfit_entry_id' => $entry->id,
+                'outfit_date' => $entry->created_at->toDateString(),
+            ], $entry->item->toArray());
+        });
+
+        return view('review', ['items' => $items]);
+    }
 }

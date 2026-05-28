@@ -385,3 +385,45 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     height: 80px;
     object-fit: contain;
 }
+
+
+
+.review-btn {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #444;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%;
+    max-width: 450px;
+    cursor: pointer;
+    border: none;
+    height: 120px; 
+    background-color: white;
+}
+
+.review-btn:hover {
+    transform: scale(1.05);
+    background-color: #fcfcfc;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    color: #111;
+    font-weight: 400;
+}
+
+.review-item {
+    width: 180px; 
+    height: 180px; 
+    object-fit: contain; 
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.3));
+    position: relative;
+}
+
+@media (max-width: 1200px) {
+    .outfit-display {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        margin-top: 40px;
+        justify-content: center;
+    }
+    .outfit-display div { margin-top: 0 !important; }
+    .review-item { margin-top: 0 !important; margin-left: -40px; }
+}
