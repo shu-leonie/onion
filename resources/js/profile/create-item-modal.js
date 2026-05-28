@@ -118,6 +118,11 @@ function nextPage() {
     }
 
     if(currentPage === 0) {
+        const minTempInput = tempDiv.querySelector("#temp-min");
+        const maxTempInput = tempDiv.querySelector("#temp-max");
+        const rangeValueSliderMax = tempDiv.querySelector("#rangeValue-max-temp");
+        const rangeValueSliderMin = tempDiv.querySelector("#rangeValue-min-temp");
+
         errorDiv.classList.add('d-none');
         errorDiv.innerHTML = '';
 
@@ -131,9 +136,30 @@ function nextPage() {
         } else if(category.is_impacted_by_rain === 1) { //Wasserfest
             tempDiv.classList.remove("d-none");
             waterproofnessDiv.classList.remove("d-none");
+
+            if(itemForUpload.category_id === 4) { //Jacke
+                minTempInput.value = 0;
+                maxTempInput.value = 15;
+            } else if(itemForUpload.category_id === 5) { //Hose
+                minTempInput.value = 10;
+                maxTempInput.value = 25;
+            }
         } else { //Nicht wasserfest
+            if(itemForUpload.category_id === 2) { //T-Shirt
+                minTempInput.value = 15;
+                maxTempInput.value = 35;
+            } else if(itemForUpload.category_id === 3) { //Pullover
+                minTempInput.value = 0;
+                maxTempInput.value = 15;
+            } else if(itemForUpload.category_id === 6) { //Strumpfhose
+                minTempInput.value = 15;
+                maxTempInput.value = 25;
+            }
             tempDiv.classList.remove("d-none");
         }
+
+        rangeValueSliderMax.value = maxTempInput.value;
+        rangeValueSliderMin.value = minTempInput.value;
 
         currentPage++;
         generalAttributesDiv.classList.add("d-none");
