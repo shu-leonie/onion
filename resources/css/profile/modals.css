@@ -1,0 +1,144 @@
+#special-attributes, #editItemGeneralAttributes, #general-attributes, #editItemSpecialAttributes {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    border-radius: 35px;
+    padding: 24px;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+#cloud-range img, #editItemCloudRange img {
+    width: 70% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    flex-shrink: 0 !important;
+    border-radius: 20px;
+}
+
+.form-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    line-height: 1.4;
+}
+
+/* Range Slider */
+.form-range {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Slider Track */
+.form-range::-webkit-slider-runnable-track {
+    height: 10px;
+    background: linear-gradient(
+        to right,
+        #FFD166,
+        #D2A679,
+        #B8C0C8
+    );
+    border-radius: 20px;
+}
+
+/* Slider Thumb */
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #D2A679;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Output Zahl */
+.output-value {
+    margin-top: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #7A5A42;
+    align-self: flex-end;
+    background: rgba(255,255,255,0.7);
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    #cloud-range {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    #cloud-range img {
+        width: 110px;
+        height: 110px;
+    }
+
+    output {
+        align-self: center;
+    }
+}
+
+.form-control .form-select {
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  transition: all 0.2s ease;
+}
+
+/* Fokus-Styling */
+.form-control:focus, .form-select:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.15);
+}
+
+/* Image Preview schöner einrahmen */
+#imagePreview {
+  margin-top: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  object-fit: cover;
+}
+
+/* Tag-Container Styling */
+#uploadTagSelection, #editItemTagSelection {
+  min-height: 40px;
+  padding: 0.5rem;
+  border: 1px dashed #ced4da;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+#clothingCategory {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  border-radius: 10px;
+  padding: 0.65rem 2.5rem 0.65rem 0.9rem;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+/* Fokus-State */
+#clothingCategory:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.15);
+  outline: none;
+}

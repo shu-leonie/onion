@@ -135,17 +135,35 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function connectRangeValue(rangeId, outputId) {
-
         const range = document.getElementById(rangeId);
         const output = document.getElementById(outputId);
 
         if (!range || !output) return;
 
-        output.textContent = range.value;
+        const update = () => {
+            output.value = range.value;
+        };
+        const update2 = () => {
+            const max = Number(output.max);
+            const min = Number(output.min);
+            const value = Number(output.value);
 
-        range.addEventListener('input', function () {
-            output.textContent = range.value;
-        });
+            if(value > max) output.value = max;
+            if(value < min) output.value = min;
+            range.value = output.value;
+            calculateCloudCoverImage();
+        };
+
+        range.addEventListener("input", update);
+        output.addEventListener("input", update2);
+        update();
+    }
+
+    function calculateCloudCoverImage() {
+        const cloudDiv = document.getElementById('editItemCloudRange');
+        const cloudCoverSampleImage = cloudDiv.querySelector('img');
+        const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
+        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
     }
 
     connectRangeValue('editItemTempMin', 'editItemRangeValueMinTemp');
@@ -154,7 +172,14 @@ document.addEventListener('DOMContentLoaded', function () {
     connectRangeValue('editItemUvMax', 'editItemRangeValueMaxUv');
     connectRangeValue('editItemCloudCoverRange', 'editItemRangeValueClouds');
 
+    const cloudDiv = document.getElementById('editItemCloudRange');
+    const cloudCoverSampleImage = cloudDiv.querySelector('img');
+    const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
+    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+
     const editItemSubmitButton = document.getElementById('editItemSubmitButton');
+    const editItemModalError = document.getElementById('editItemModalError');
 
     if (editItemSubmitButton) {
 
@@ -205,13 +230,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
 
-            if (!response.ok || data.status === 'error') {
-                console.log(data.message || 'Fehler beim Speichern');
-                return;
-            }
+           if (!response.ok || data.status === 'error') {
+
+            editItemModalError.textContent = 'Kleidungsstück konnte nicht gespeichert werden.';
+
+            editItemModalError.classList.remove('d-none');
+
+            return;
+           }
 
             const modalElement = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalElement);
+
+            editItemModalError.textContent = '';
+
+            editItemModalError.classList.add('d-none');
 
             modal.hide();
         });

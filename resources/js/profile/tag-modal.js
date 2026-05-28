@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 newTagInput.value = tag.name;
                 saveTagButton.textContent = 'Tag aktualisieren';
                 tagError.textContent = '';
+                tagError.classList.add('d-none');
             });
 
             const deleteButton = document.createElement('button');
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (!response.ok || data.status === 'error') {
                     tagError.textContent = data.message || 'Tag konnte nicht gelöscht werden.';
+                    tagError.classList.remove('d-none');
                     return;
                 }
 
@@ -52,7 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     return currentTag.id !== tag.id;
                 });
 
+                editingTagId = null;
+                saveTagButton.textContent = 'Tag speichern';
+                newTagInput.value = '';
+
                 tagError.textContent = '';
+                tagError.classList.add('d-none');
+
                 window.tags = currentTags;
                 renderTags();
             });
@@ -70,6 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const tagName = newTagInput.value.trim();
 
             if (!tagName) {
+                tagError.textContent = 'Bitte gib einen Tag-Namen ein.';
+                tagError.classList.remove('d-none');
                 return;
             }
 
@@ -89,6 +99,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             } else {
                 if (currentTags.some(tag => tag.name === tagName)) {
+                    tagError.textContent = 'Dieser Tag existiert bereits.';
+                    tagError.classList.remove('d-none');
                     return;
                 }
 
@@ -108,7 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (!response.ok || data.status === 'error') {
-                tagError.textContent = data.message || 'Fehler beim Speichern des Tags.';
+                tagError.textContent = 'Tag konnte nicht gespeichert werden.';
+                tagError.classList.remove('d-none');
                 return;
             }
 
@@ -133,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderTags();
 
             tagError.textContent = '';
+            tagError.classList.add('d-none');
             newTagInput.value = '';
         });
     }
