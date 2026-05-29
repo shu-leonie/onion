@@ -427,3 +427,28 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     .outfit-display div { margin-top: 0 !important; }
     .review-item { margin-top: 0 !important; margin-left: -40px; }
 }
+
+.feedback-wrapper {
+    min-height: 100vh; 
+    text-align: center; 
+    padding-top: 80px;
+}
+
+.feedback-onion-img {
+    width: 700px; 
+    margin-bottom: 2rem; 
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.feedback-text {
+    color: #444; 
+    font-weight: 300; 
+    font-size: 2.2rem; 
+    max-width: 600px; 
+    padding: 0 20px;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
