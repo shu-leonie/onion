@@ -1,10 +1,7 @@
 <head>
   <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<!-- Button für das Tag-Modal -->
-<button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addTagModal">
-  <i class="bi bi-tag"></i> TAG HINZUFÜGEN
-</button>
+
 
 <!-- Tag-Modal -->
 <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true"

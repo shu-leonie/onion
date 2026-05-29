@@ -55,3 +55,5 @@ Route::resource('tags', TagController::class)->except(['show'])->middleware('aut
 Route::put('/user/offset', [UserController::class, 'updateOffset'])->name('user.updateOffset');
 Route::post('/selected-outfits/add/{item}', [SelectedOutfitController::class, 'addItem'])->name('selected-outfits.add')->middleware('auth');
 Route::put('/selected-outfits/{selectedOutfit}/save-review', [SelectedOutfitController::class, 'saveReview'])->name('selected-outfits.save-review')->middleware('auth');
+
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
