@@ -16,74 +16,57 @@
 
 <body data-tags="{{ json_encode($tags) }}">
 
-<main class="wrapper">
-    <aside class="side-area branding">
-        <div class="brand-content">
-            <h1 class="onion-title">on¿on</h1>
-            <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
-            <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
-        @guest
-   
-    <div class="auth-buttons mt-4">
-        <a href="{{ route('login') }}" class="btn btn-primary me-2">
-            Anmelden
-        </a>
-        <a href="{{ route('register') }}" class="btn btn-success">
-            Registrieren
-        </a>
-    </div>
-        @endguest
-            
-        </div>
-    </aside>
+    <main class="wrapper">
+        <aside class="side-area branding">
+            <div class="brand-content">
+                <h1 class="onion-title">on¿on</h1>
+                <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
+                <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
+                @guest
 
-    <section class="main-configurator">
-        <form action="{{ route('outfit.save') }}" method="POST" id="outfit-form">
-            @csrf
+                <div class="auth-buttons mt-4">
+                    <a href="{{ route('login') }}" class="btn btn-primary me-2">
+                        Anmelden
+                    </a>
+                    <a href="{{ route('register') }}" class="btn btn-success">
+                        Registrieren
+                    </a>
+                </div>
+                @endguest
 
-            @foreach($categories as $cat)
+            </div>
+        </aside>
+
+        <section class="main-configurator">
+            <form action="{{ route('outfit.save') }}" method="POST" id="outfit-form">
+                @csrf
+
+                @foreach($categories as $cat)
                 <div class="outfit-capsule" data-category="{{ $cat }}">
 
                     @if($cat === 'upper')
-                        <div class="layer-selection-grid">
-                            <div class="layer-square" data-layer="upper_shirt">
-                                <div class="square-content">
-                                    <i class="bi bi-plus-lg plus-icon"></i>
-                                    <img src="" class="square-image">
-                                </div>
-                            </div>
-                            <div class="layer-square" data-layer="upper_pulli">
-                                <div class="square-content">
-                                    <i class="bi bi-plus-lg plus-icon"></i>
-                                    <img src="" class="square-image">
-                                </div>
-                            </div>
-                            <div class="layer-square" data-layer="upper_jacke">
-                                <div class="square-content">
-                                    <i class="bi bi-plus-lg plus-icon"></i>
-                                    <img src="" class="square-image">
-                                </div>
+                    <div class="layer-selection-grid">
+                        <div class="layer-square" data-layer="upper_shirt">
+                            <div class="square-content">
+                                <i class="bi bi-plus-lg plus-icon"></i>
+                                <img src="" class="square-image">
                             </div>
                         </div>
-
-                        <div class="layer-carousel-view d-none">
-                            <button type="button" class="nav-arrow prev"><i class="bi bi-chevron-left"></i></button>
-                            <div class="view-window">
-                                <img src="" class="item-side item-prev">
-                                <div class="main-item-wrapper">
-                                    <img src="" class="item-main shadow-aura">
-                                    <div class="select-trigger-overlay"></div>
-                                </div>
-                                <img src="" class="item-side item-next">
+                        <div class="layer-square" data-layer="upper_pulli">
+                            <div class="square-content">
+                                <i class="bi bi-plus-lg plus-icon"></i>
+                                <img src="" class="square-image">
                             </div>
-                            <button type="button" class="nav-arrow next"><i class="bi bi-chevron-right"></i></button>
                         </div>
+                        <div class="layer-square" data-layer="upper_jacke">
+                            <div class="square-content">
+                                <i class="bi bi-plus-lg plus-icon"></i>
+                                <img src="" class="square-image">
+                            </div>
+                        </div>
+                    </div>
 
-                        <input type="hidden" name="upper_shirt_id" id="input-upper_shirt">
-                        <input type="hidden" name="upper_pulli_id" id="input-upper_pulli">
-                        <input type="hidden" name="upper_jacke_id" id="input-upper_jacke">
-
-                    @else
+                    <div class="layer-carousel-view d-none">
                         <button type="button" class="nav-arrow prev"><i class="bi bi-chevron-left"></i></button>
                         <div class="view-window">
                             <img src="" class="item-side item-prev">
@@ -94,102 +77,109 @@
                             <img src="" class="item-side item-next">
                         </div>
                         <button type="button" class="nav-arrow next"><i class="bi bi-chevron-right"></i></button>
-                        <input type="hidden" name="{{ $cat }}_id" id="input-{{ $cat }}">
+                    </div>
+
+                    <input type="hidden" name="upper_shirt_id" id="input-upper_shirt">
+                    <input type="hidden" name="upper_pulli_id" id="input-upper_pulli">
+                    <input type="hidden" name="upper_jacke_id" id="input-upper_jacke">
+
+                    @else
+                    <button type="button" class="nav-arrow prev"><i class="bi bi-chevron-left"></i></button>
+                    <div class="view-window">
+                        <img src="" class="item-side item-prev">
+                        <div class="main-item-wrapper">
+                            <img src="" class="item-main shadow-aura">
+                            <div class="select-trigger-overlay"></div>
+                        </div>
+                        <img src="" class="item-side item-next">
+                    </div>
+                    <button type="button" class="nav-arrow next"><i class="bi bi-chevron-right"></i></button>
+                    <input type="hidden" name="{{ $cat }}_id" id="input-{{ $cat }}">
                     @endif
                 </div>
-            @endforeach
-        </form>
-        <button type="submit" form="outfit-form" class="anziehen-btn mobile-only">ANZIEHEN</button>
-    </section>
+                @endforeach
+            </form>
+            <button type="submit" form="outfit-form" class="anziehen-btn mobile-only">ANZIEHEN</button>
+        </section>
 
-    <!--wetter blcok ist grad einfach nur platzhalter den müsstet ihr bitte noch dynamsich befüllen (je nach dem wie du die sachen in der db dann final benennst...-->
-    <aside class="side-area info">
-        <div class="weather-desktop">
+        <!--wetter blcok ist grad einfach nur platzhalter den müsstet ihr bitte noch dynamsich befüllen (je nach dem wie du die sachen in der db dann final benennst...-->
+        <aside class="side-area info">
+            <div class="weather-desktop">
 
-            <div class="weather-city">
-                <i class="bi bi-geo-alt-fill"></i>
-                <span id="locationText">
-                    {{ $location }}
-                </span>
-            </div>
-
-            <div class="city-search">
-                <input
-                    type="text"
-                    id="cityInput"
-                    placeholder="Ort eingeben"
-                >
-
-                <button
-                    class="weather-button"
-                    onclick="getWeatherByCity()"
-                >
-                    Ändern
-                </button>
-            </div>
-            <p id="cityError" class="city-error"></p>
-
-            <button
-                class="location-link"
-                    onclick="getLocation()"
-                >
-                <i class="bi bi-crosshair"></i>
-                Aktuellen Standort nutzen
-            </button>
-            <p id="locationInfoText">
-                {{ $weather['weather'][$current_time]['description'] }}
-            </p>
-
-            <div class="d-flex align-items-center gap-2">
-                <h2 class="display-temp" id="temperatureText">
-                    {{ $weather['apparentTemperature'][$current_time] }}°
-                </h2>
-                <div class="weather-icons">
-                    <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}" class="weather-icon">
+                <div class="weather-city">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span id="locationText">
+                        {{ $location }}
+                    </span>
                 </div>
-            </div>
-            <p class="condition" id="weatherInfoText">
-                {{ $weather['weather'][$current_time]['description'] }}
-            </p>
 
-            <!--<div class="recommendation-box">
+                <div class="city-search">
+                    <input type="text" id="cityInput" placeholder="Ort eingeben">
+
+                    <button class="weather-button" onclick="getWeatherByCity()">
+                        Ändern
+                    </button>
+                </div>
+                <p id="cityError" class="city-error"></p>
+
+                <button class="location-link" onclick="getLocation()">
+                    <i class="bi bi-crosshair"></i>
+                    Aktuellen Standort nutzen
+                </button>
+                <p id="locationInfoText">
+                    {{ $weather['weather'][$current_time]['description'] }}
+                </p>
+
+                <div class="d-flex align-items-center gap-2">
+                    <h2 class="display-temp" id="temperatureText">
+                        {{ $weather['apparentTemperature'][$current_time] }}°
+                    </h2>
+                    <div class="weather-icons">
+                        <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}"
+                            class="weather-icon">
+                    </div>
+                </div>
+                <p class="condition" id="weatherInfoText">
+                    {{ $weather['weather'][$current_time]['description'] }}
+                </p>
+
+                <!--<div class="recommendation-box">
                 <p>
                     hier ist theoretisch noch platz für einen kleinen infotext
                     zum wetter oder so idk
                 </p>
             </div>-->
 
-        </div>
-    </aside>
+            </div>
+        </aside>
 
-    <div class="grid" id="tags">
-        @foreach($tags as $tag)
+        <div class="grid" id="tags">
+            @foreach($tags as $tag)
             <div>
-                <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}"/>
+                <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" />
                 <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
             </div>
-        @endforeach
+            @endforeach
+        </div>
+
+    </main>
+    <div class="mt-2">
+        {{-- @include('modals.add-tag') --}}
     </div>
 
-</main>
-<div class="mt-2">
-  {{-- @include('modals.add-tag') --}}
-</div>
+    <div class="mt-3">
+        {{-- @include('modals.upload-clothing') --}}
+    </div>
 
-<div class="mt-3">
-  {{-- @include('modals.upload-clothing') --}}
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @vite(['resources/js/modal.js'])
 
-@vite(['resources/js/modal.js'])
-
-<!--Geolocation: geht nur mit herd secure vorher lokal aktivieren da https benötigt wird--> 
+    <!--Geolocation: geht nur mit herd secure vorher lokal aktivieren da https benötigt wird-->
 
 
-<script>
-
-function getLocation() {
+    <script>
+        function getLocation() {
 
     if (navigator.geolocation) {
 
@@ -237,10 +227,10 @@ function error(error) {
 }
 
 
-</script>
+    </script>
 
-<script>
-async function getWeatherByCity() {
+    <script>
+        async function getWeatherByCity() {
 
     const city = document.getElementById("cityInput").value;
 
@@ -268,7 +258,8 @@ async function getWeatherByCity() {
         `/?latitude=${data.latitude}&longitude=${data.longitude}`;
 }
 
-</script>
+    </script>
 
 </body>
+
 </html>
