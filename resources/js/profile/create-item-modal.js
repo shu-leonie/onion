@@ -50,23 +50,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const cloudCoverSampleImage = cloudDiv.querySelector('img');
-    const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
-    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
-    cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+    const cloudCoverSampleImage = cloudDiv?.querySelector('img');
+    const cloudCoverSlider = cloudDiv?.querySelector('#cloud-cover-range');
+    if(cloudCoverSampleImage && cloudCoverSlider) {
+        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+        cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+    }
 
-    nextPageButton.addEventListener("click", nextPage);
-    previousPageButton.addEventListener("click", previousPage);
-    submitButton.addEventListener("click", uploadItem);
+    if(nextPageButton) nextPageButton.addEventListener("click", nextPage);
+    if(previousPageButton) previousPageButton.addEventListener("click", previousPage);
+    if(submitButton) submitButton.addEventListener("click", uploadItem);
 
-    ignoreWaterproofness.addEventListener("change", () => {
-        if (ignoreWaterproofness.checked) {
-            waterproofnessSwitch.disabled = true;
-            waterproofnessSwitch.checked = false;
-        } else {
-            waterproofnessSwitch.disabled = false;
-        }
-    });
+    if(ignoreWaterproofness && waterproofnessSwitch) {
+        ignoreWaterproofness.addEventListener("change", () => {
+            if (ignoreWaterproofness.checked) {
+                waterproofnessSwitch.disabled = true;
+                waterproofnessSwitch.checked = false;
+            } else {
+                waterproofnessSwitch.disabled = false;
+            }
+        });
+    }
 
     bindRangeOutput("temp-min", "rangeValue-min-temp");
     bindRangeOutput("temp-max", "rangeValue-max-temp");
@@ -75,18 +79,22 @@ document.addEventListener('DOMContentLoaded', function() {
     bindRangeOutput("cloud-cover-range", "rangeValue-clouds");
 })
 
-modalEl.addEventListener('show.bs.modal', function () {
-    const uploadTagSelection = document.getElementById('uploadTagSelection');
-    if (uploadTagSelection && tags.length > 0) {
-        uploadTagSelection.innerHTML = '';
-        tags.forEach((tag) => {
-            addNewTagToItemModal(tag.name, tag.id);
-        });
-    }
-});
+if (modalEl) {
+    modalEl.addEventListener('show.bs.modal', function () {
+        const uploadTagSelection = document.getElementById('uploadTagSelection');
+        if (uploadTagSelection && tags.length > 0) {
+            uploadTagSelection.innerHTML = '';
+            tags.forEach((tag) => {
+                addNewTagToItemModal(tag.name, tag.id);
+            });
+        }
+    });
+}
 
 export function addNewTagToItemModal(name, tagId) {
     const uploadTagSelection = document.getElementById('uploadTagSelection');
+    if (!uploadTagSelection) return;
+    
     const tagCheckbox = document.createElement('div');
     tagCheckbox.className = 'form-check';
     tagCheckbox.innerHTML = `
@@ -95,14 +103,16 @@ export function addNewTagToItemModal(name, tagId) {
     `;
     uploadTagSelection.appendChild(tagCheckbox);
     const newCheckboxElement = uploadTagSelection.querySelector(`#upload-tag-${tagId}`);
-    newCheckboxElement.addEventListener("change", () => {
-        if (newCheckboxElement.checked) {
-            itemForUpload.tags.push(tagId);
-        } else {
-            const i = itemForUploa.tags.indexOf(tagId)
-            if (i > -1) itemForUpload.tags.splice(i, 1)
-        }
-    });
+    if (newCheckboxElement) {
+        newCheckboxElement.addEventListener("change", () => {
+            if (newCheckboxElement.checked) {
+                itemForUpload.tags.push(tagId);
+            } else {
+                const i = itemForUpload.tags.indexOf(tagId);
+                if (i > -1) itemForUpload.tags.splice(i, 1);
+            }
+        });
+    }
 }
 
 function nextPage() {
@@ -129,29 +139,29 @@ function nextPage() {
         itemForUpload.name = itemName;
         itemForUpload.category_id = parseInt(itemCategory);
 
-        if(itemForUpload.category_id === 10) { //Sonnenbrille
+        if(itemForUpload.category_id === 10) { 
             cloudDiv.classList.remove("d-none");
-        } else if(itemForUpload.category_id === 11) { //Sonnencreme
+        } else if(itemForUpload.category_id === 11) { 
             uvDiv.classList.remove("d-none");
-        } else if(category.is_impacted_by_rain === 1) { //Wasserfest
+        } else if(category.is_impacted_by_rain === 1) { 
             tempDiv.classList.remove("d-none");
             waterproofnessDiv.classList.remove("d-none");
 
-            if(itemForUpload.category_id === 4) { //Jacke
+            if(itemForUpload.category_id === 4) { 
                 minTempInput.value = 0;
                 maxTempInput.value = 15;
-            } else if(itemForUpload.category_id === 5) { //Hose
+            } else if(itemForUpload.category_id === 5) { 
                 minTempInput.value = 10;
                 maxTempInput.value = 25;
             }
-        } else { //Nicht wasserfest
-            if(itemForUpload.category_id === 2) { //T-Shirt
+        } else { 
+            if(itemForUpload.category_id === 2) { 
                 minTempInput.value = 15;
                 maxTempInput.value = 35;
-            } else if(itemForUpload.category_id === 3) { //Pullover
+            } else if(itemForUpload.category_id === 3) { 
                 minTempInput.value = 0;
                 maxTempInput.value = 15;
-            } else if(itemForUpload.category_id === 6) { //Strumpfhose
+            } else if(itemForUpload.category_id === 6) { 
                 minTempInput.value = 15;
                 maxTempInput.value = 25;
             }
@@ -186,7 +196,7 @@ function uploadItem() {
     const category = window.categories.find(category => category.id === itemForUpload.category_id);
     let itemUploadSuccess = false;
 
-    if(itemForUpload.category_id === 10) { //Sonnenbrille
+    if(itemForUpload.category_id === 10) { 
         itemForUpload.cloud_cover_threshold = cloudDiv.querySelector('#cloud-cover-range').value;
 
         itemForUpload.min_temperature = null;
@@ -194,7 +204,7 @@ function uploadItem() {
         itemForUpload.min_uv_index = null;
         itemForUpload.max_uv_index = null;
         itemForUpload.is_waterproof = null;
-    } else if(itemForUpload.category_id === 11) { //Sonnencreme
+    } else if(itemForUpload.category_id === 11) { 
         itemForUpload.min_uv_index = uvDiv.querySelector("#uv-min").value;
         itemForUpload.min_uv_index = uvDiv.querySelector("#uv-max").value;
 
@@ -202,7 +212,7 @@ function uploadItem() {
         itemForUpload.max_temperature = null;
         itemForUpload.is_waterproof = null;
         itemForUpload.cloud_cover_threshold = null;
-    } else if(category.is_impacted_by_rain === 1) { //Wasserfest
+    } else if(category.is_impacted_by_rain === 1) { 
         if (ignoreWaterproofness.checked) {
             itemForUpload.is_waterproof = null;
         } else {
@@ -214,7 +224,7 @@ function uploadItem() {
         itemForUpload.min_uv_index = null;
         itemForUpload.max_uv_index = null;
         itemForUpload.cloud_cover_threshold = null;
-    } else { //Nicht wasserfest
+    } else { 
         itemForUpload.min_temperature = tempDiv.querySelector("#temp-min").value;
         itemForUpload.max_temperature = tempDiv.querySelector("#temp-max").value;
 
@@ -254,11 +264,12 @@ function uploadItem() {
         if(data.success) {
             errorDiv.innerHTML = '';
             errorDiv.classList.add('d-none');
-            const modalEl = document.getElementById('uploadModal');
-            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            const targetModalEl = document.getElementById('uploadModal');
+            if (targetModalEl) {
+                const modal = bootstrap.Modal.getOrCreateInstance(targetModalEl);
+                modal.hide();
+            }
 
-            //KLEIDUNGSSTÜCK ÜBER FUNKTION ZU ITEMS AUF DER SEITE HINZUFÜGEN?
-            modal.hide();
             generalAttributesDiv.classList.remove("d-none");
             specialAttributesDiv.classList.add("d-none");
             previousPageButton.classList.add("d-none");
@@ -267,6 +278,8 @@ function uploadItem() {
             currentPage = 0;
             hideAllAttributes();
             resetAllAttributes();
+            
+            window.location.reload();
         } else {
             errorDiv.innerHTML = data.message;
             errorDiv.classList.remove('d-none');
@@ -293,27 +306,28 @@ function resetAllAttributes() {
     document.getElementById("clothingCategory").selectedIndex = 0;
 
     const tagContainer = document.getElementById("uploadTagSelection");
-    tagContainer.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        cb.checked = false;
-    });
+    if(tagContainer) {
+        tagContainer.querySelectorAll("input[type='checkbox']").forEach(cb => {
+            cb.checked = false;
+        });
+    }
 
+    if(ignoreWaterproofness) ignoreWaterproofness.checked = false;
+    if(waterproofnessSwitch) waterproofnessSwitch.checked = false;
 
-    ignoreWaterproofness.checked = false;
-    waterproofnessSwitch.checked = false;
+    if(document.getElementById('temp-min')) document.getElementById('temp-min').value = 0;
+    if(document.getElementById('temp-max')) document.getElementById('temp-max').value = 10;
 
-    document.getElementById('temp-min').value = 0;
-    document.getElementById('temp-max').value = 10;
+    if(document.getElementById('uv-min')) document.getElementById('uv-min').value = 1;
+    if(document.getElementById('uv-max')) document.getElementById('uv-max').value = 7;
 
-    document.getElementById('uv-min').value = 1;
-    document.getElementById('uv-max').value = 7;
+    if(document.getElementById('cloud-cover-range')) document.getElementById('cloud-cover-range').value = 50;
 
-    document.getElementById('cloud-cover-range').value = 50;
-
-    document.getElementById('rangeValue-min-temp').textContent = 0;
-    document.getElementById('rangeValue-max-temp').textContent = 10;
-    document.getElementById('rangeValue-min-uv').textContent = 1;
-    document.getElementById('rangeValue-max-uv').textContent = 7;
-    document.getElementById('rangeValue-clouds').textContent = 50;
+    if(document.getElementById('rangeValue-min-temp')) document.getElementById('rangeValue-min-temp').textContent = 0;
+    if(document.getElementById('rangeValue-max-temp')) document.getElementById('rangeValue-max-temp').textContent = 10;
+    if(document.getElementById('rangeValue-min-uv')) document.getElementById('rangeValue-min-uv').textContent = 1;
+    if(document.getElementById('rangeValue-max-uv')) document.getElementById('rangeValue-max-uv').textContent = 7;
+    if(document.getElementById('rangeValue-clouds')) document.getElementById('rangeValue-clouds').textContent = 50;
 }
 
 function bindRangeOutput(rangeId, outputId) {
@@ -338,11 +352,14 @@ function bindRangeOutput(rangeId, outputId) {
 
     range.addEventListener("input", update);
     output.addEventListener("input", update2);
-    update(); // initialer Wert beim Laden
+    update(); 
 }
 
 function calculateCloudCoverImage() {
+    if(!cloudDiv) return;
     const cloudCoverSampleImage = cloudDiv.querySelector('img');
     const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
-    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    if(cloudCoverSampleImage && cloudCoverSlider) {
+        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    }
 }

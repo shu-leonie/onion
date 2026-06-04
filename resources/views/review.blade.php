@@ -4,9 +4,6 @@
 <main class="wrapper">
     
     <aside class="side-area branding" style="align-items: flex-start; text-align: left;">
-        <a href="{{ route('onion.home') }}" class="back-to-config" style="margin-bottom: 3rem; font-size: 1.2rem; color: #444; text-decoration: none;">
-            &larr; zurück
-        </a>
         <div class="brand-content">
             <h1 class="onion-title">on¿on</h1>
             <p class="onion-subtitle" style="font-size: 2rem; line-height: 1.2; margin-top: 10px;">
@@ -44,60 +41,89 @@
     </section>
 
     <aside class="side-area info" style="align-items: center; justify-content: flex-start; padding-top: 20px;">
-        
+
+
         @php
-            $upper = []; $lower = []; $feet = []; $other = [];
-            
-            // Wir sortieren die Items in logische Körper-Gruppen
+            $groups = [
+                'head' => [],
+                'upper' => [],
+                'lower' => [],
+                'feet' => [],
+            ];
+
+            $layerOrder = [
+                'Kopfbedeckung' => 1,
+                'Sonnenbrille' => 2,
+
+                'T-Shirt' => 10,
+                'Pullover' => 20,
+                'Jacke' => 30,
+
+                'Strumpfhose' => 40,
+                'Hose' => 50,
+
+                'Socken' => 60,
+                'Schuhe' => 70,
+            ];
+
             foreach($items as $item) {
+
                 $cat = $item['category']['name'] ?? '';
-                if(in_array($cat, ['T-Shirt', 'Pullover', 'Jacke'])) {
-                    $upper[] = $item;
-                } elseif(in_array($cat, ['Hose', 'Strumpfhose'])) {
-                    $lower[] = $item;
-                } elseif(in_array($cat, ['Schuhe', 'Socken'])) {
-                    $feet[] = $item;
-                } else {
-                    $other[] = $item;
+
+                if(in_array($cat, ['Kopfbedeckung', 'Sonnenbrille'])) {
+                    $groups['head'][] = $item;
                 }
+                elseif(in_array($cat, ['T-Shirt', 'Pullover', 'Jacke'])) {
+                    $groups['upper'][] = $item;
+                }
+                elseif(in_array($cat, ['Hose', 'Strumpfhose'])) {
+                    $groups['lower'][] = $item;
+                }
+                elseif(in_array($cat, ['Schuhe', 'Socken'])) {
+                    $groups['feet'][] = $item;
+                }
+            }
+
+            foreach($groups as &$group) {
+                usort($group, function($a, $b) use ($layerOrder) {
+                    return ($layerOrder[$a['category']['name']] ?? 99)
+                        <=> ($layerOrder[$b['category']['name']] ?? 99);
+                });
             }
         @endphp
 
-        <div class="outfit-display d-flex flex-column align-items-center">
-            
-            @if(count($upper) > 0)
-            <div class="d-flex flex-row justify-content-center" style="z-index: 10;">
-                @foreach($upper as $index => $item)
-                    <img src="{{ asset($item['filepath']) }}" class="review-item" style="z-index: {{ $index + 10 }}; {{ $index > 0 ? 'margin-left: -90px;' : '' }}">
+        <div class="outfit-preview">
+
+            {{-- Kopf --}}
+            <div class="category-group">
+                @foreach($groups['head'] as $index => $item)
+                    <img src="{{ asset($item['filepath']) }}" class="layer" style="z-index: {{ $index }}">
                 @endforeach
             </div>
-            @endif
 
-            @if(count($lower) > 0)
-            <div class="d-flex flex-row justify-content-center" style="margin-top: -30px; z-index: 5;">
-                @foreach($lower as $index => $item)
-                    <img src="{{ asset($item['filepath']) }}" class="review-item" style="z-index: {{ $index + 5 }}; {{ $index > 0 ? 'margin-left: -60px;' : '' }}">
+            {{-- Oberkörper --}}
+            <div class="category-group">
+                @foreach($groups['upper'] as $index => $item)
+                    <img src="{{ asset($item['filepath']) }}" class="layer" style="z-index: {{ $index }}">
                 @endforeach
             </div>
-            @endif
 
-            @if(count($feet) > 0)
-            <div class="d-flex flex-row justify-content-center" style="margin-top: -10px; z-index: 1;">
-                @foreach($feet as $index => $item)
-                    <img src="{{ asset($item['filepath']) }}" class="review-item" style="z-index: {{ $index + 1 }}; {{ $index > 0 ? 'margin-left: -40px;' : '' }}">
+            {{-- Unterkörper --}}
+            <div class="category-group">
+                @foreach($groups['lower'] as $index => $item)
+                    <img src="{{ asset($item['filepath']) }}" class="layer" style="z-index: {{ $index }}">
                 @endforeach
             </div>
-            @endif
 
-            @if(count($other) > 0)
-            <div class="d-flex flex-row justify-content-center" style="margin-top: 10px;">
-                @foreach($other as $item)
-                    <img src="{{ asset($item['filepath']) }}" class="review-item" style="margin-left: 10px;">
+            {{-- Füße --}}
+            <div class="category-group">
+                @foreach($groups['feet'] as $index => $item)
+                    <img src="{{ asset($item['filepath']) }}" class="layer" style="z-index: {{ $index }}">
                 @endforeach
             </div>
-            @endif
 
-        </div>
+</div>
+        
     </aside>
 
 </main>

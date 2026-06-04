@@ -3,19 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\SelectedOutfit;
+use Exception;
+
 class UserController extends Controller
 {
     public function updateOffset(Request $request)
     {
         $request->validate([
             'temperature_offset' => 'required|integer',
-            'outfit_ids' => 'array', 
+            'outfit_ids' => 'nullable|array',
         ]);
 
         try {
             $user = auth()->user();
-            
+
             $user->update([
                 'temperature_offset' => $user->temperature_offset + $request->input('temperature_offset'),
             ]);
@@ -23,18 +26,14 @@ class UserController extends Controller
             if ($request->has('outfit_ids')) {
                 SelectedOutfit::whereIn('id', $request->input('outfit_ids'))
                     ->where('user_id', $user->id)
-                    ->update(['has_been_reviewed' => 1]);
+                    ->update(['has_been_reviewed' => true]);
             }
 
-            $status = 'success';
-            $message = 'Vielen Dank für dein Feedback!';
-        } catch (\Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+            return view('review-success', [ //uh yea jetzt bekommt ner nutzer ein feedback das alles geklappt hat :)
+                'offset' => $request->input('temperature_offset')
+            ]);
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.');
         }
-
-        return view('review-success', [
-            'offset' => $request->input('temperature_offset')
-        ]);
     }
 }

@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('content')
 <script>
     window.items = @json($items);
     window.tags = @json($tags);
@@ -7,10 +8,8 @@
     window.unreviewedOutfitsByDay = @json($unreviewedOutfitsByDay);
 </script>
 
-@section('content')
 <main class="wrapper profile-page">
     
-    <!-- Sidebar: Branding & Action-Buttons -->
     <aside class="side-area branding">
         <div class="brand-content">
             <a href="/" class="back-to-config">← zurück zum outfit konfigurator</a>
@@ -23,14 +22,13 @@
             </div>
         </div>
         
-        <!-- Rechtsbündige Buttons -->
         <div class="profile-actions d-flex flex-column gap-3 mt-4" style="width: 100%; align-items: flex-end;">
     
             <a href="{{ route('settings') }}" class="side-pill text-center text-decoration-none">
                 Einstellungen
             </a>
             
-            <button type="button" class="side-pill border-0" data-bs-toggle="modal" data-bs-target="#uploadClothingModal">
+            <button type="button" class="side-pill border-0" data-bs-toggle="modal" data-bs-target="#uploadModal">
                 neues Item hinzufügen
             </button>
             
@@ -40,7 +38,6 @@
         </div>
     </aside>
 
-    <!-- Hauptbereich: Kleiderschrank -->
     <section class="main-configurator" style="justify-content: flex-start; padding-top: 40px; overflow-y: auto;"> 
         <h2 class="closet-header mb-5">Dein Kleiderschrank</h2>
 
@@ -59,7 +56,6 @@
                         <div class="horizontal-scroll-container d-flex gap-3 pb-2" style="overflow-x: auto; flex-wrap: nowrap; scrollbar-width: thin;">
                             @foreach($categoryItems as $item)
                                 @php
-                                    // Bereinigt den Pfad: Falls storage im String ist, entfernen wir es für den asset()-Aufruf
                                     $path = str_replace('/storage/', '', $item->filepath ?? $item['filepath'] ?? '');
                                 @endphp
                                 
@@ -86,11 +82,14 @@
         </div>
     </section>
 
-    <!-- Modals -->
     <div class="mt-3">
         @include('modals.upload-clothing')
         @include('modals.add-tag')
         @include('modals.edit-item')
     </div>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@vite(['resources/js/modal.js'])
+
 @endsection

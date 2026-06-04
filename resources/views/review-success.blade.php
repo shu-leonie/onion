@@ -4,24 +4,23 @@
 @php
     if ($offset == 1) {
         $image = 'img/oni-zu-kalt.png';
-        $text = 'Brrr... Gemerkt!<br>Nächstes Mal packe ich dich wärmer ein...';
+        $text = 'Brrr... Gemerkt!<br>Nächstes Mal packe ich dich wärmer ein...<br>' . 
+                '<small>Falls du Anpassungen an deinem Kleiderschrank vornehmen möchtest,<br>kannst du das übrigens im Kleiderschrank tun!</small>';
     } elseif ($offset == -1) {
         $image = 'img/oni-zu-warm.png';
-        $text = 'Ohje, zu warm!<br>Ich empfehle dir ab jetzt luftigere Sachen!';
+        $text = 'Ohje, zu warm!<br>Ich merke mir, dass dir schnell heiß ist!<br>' . 
+                '<small>Falls du Anpassungen an deinem Kleiderschrank vornehmen möchtest,<br>kannst du das übrigens im Kleiderschrank tun!</small>';
     } else {
         $image = 'img/oni-genau-richtig.png';
-        $text = 'Perfekt!<br>Hoffentlich können wir dir auch Morgen wieder helfen!';
+        $text = 'Perfekt!<br>Hoffentlich bis morgen!!';
     }
 @endphp
 
-<main class="wrapper d-flex flex-column justify-content-start align-items-center feedback-wrapper">
-    
+<main class="wrapper feedback-wrapper">
     <img src="{{ asset($image) }}" alt="Onion Feedback" class="feedback-onion-img">
-    
-    <h2 class="feedback-text">
-        {!! $text !!} 
-    </h2>
-
+    <div class="feedback-text-container">
+        {!! $text !!}
+    </div>
 </main>
 
 <script>

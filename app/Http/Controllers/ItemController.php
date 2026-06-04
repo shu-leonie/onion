@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return view('items.index', [
@@ -22,9 +19,6 @@ class ItemController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('items.create', [
@@ -33,12 +27,11 @@ class ItemController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validated = $this->validate($request);
+        $validated = $this->validateRequest($request); 
+        //validateRequest statt vallidate... (laravel hat bereits eune validate funktion // 
+        // nicht das wir desshalb irgendwelche random bugs bekommen)
 
         if (! empty($validated['tags'])) {
             $tags = $validated['tags'];
@@ -47,16 +40,11 @@ class ItemController extends Controller
             $tags = [];
         }
 
-        // set user_id
         $validated['user_id'] = $request->user()->id;
-
-        // get image
         $image = $request->file('filepath');
 
         try {
-
             if (! empty($image)) {
-                // save image
                 $filepath = $this->saveImage($image);
                 $validated['filepath'] = $filepath;
             }
@@ -77,20 +65,13 @@ class ItemController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Item $item)
     {
-        //
+        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Item $item)
     {
         return view('items.edit', [
@@ -100,12 +81,9 @@ class ItemController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Item $item)
     {
-        $validated = $this->validate($request);
+        $validated = $this->validateRequest($request);
 
         if (! empty($validated['tags'])) {
             $tags = $validated['tags'];
@@ -114,58 +92,53 @@ class ItemController extends Controller
             $tags = [];
         }
 
-        // set user_id
         $validated['user_id'] = $request->user()->id;
-
-        // get image
         $image = $request->file('filepath');
 
         try {
-
             if (! empty($image)) {
                 if (! empty($item->filepath)) {
-                    // delete old image
                     Storage::delete($item->filepath);
                 }
-                // save image
                 $filepath = $this->saveImage($image);
                 $validated['filepath'] = $filepath;
             }
 
             $item->update($validated);
             $item->tags()->sync($tags);
+            
             $status = 'success';
             $message = 'Die Änderungen wurden erfolgreich gespeichert.';
 
-        if ($request->expectsJson()) {
-            return response()->json([
-            'status' => $status,
-            'item' => $item,
-            'message' => $message,
-        ], $status === 'success' ? 200 : 500);
-}
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => $status,
+                    'item' => $item,
+                    'message' => $message,
+                ], 200);
+            }
+
+            return redirect()->back()->with($status, $message);
 
         } catch (Exception $e) {
             $status = 'error';
             $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+            
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => $status,
                     'message' => $message,
                 ], 500);
             }
-        }
 
+            return redirect()->back()->with($status, $message);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Item $item)
     {
         try {
             if (! empty($item->filepath)) {
-                // delete image
                 Storage::disk('public')->delete($item->filepath);
             }
             $item->delete();
@@ -179,10 +152,7 @@ class ItemController extends Controller
         return redirect(route('items.index'))->with($status, $message);
     }
 
-    /**
-     * Validation
-     */
-    private function validate(Request $request)
+    private function validateRequest(Request $request)
     {
         return $request->validate([
             'name' => 'required|string|max:255',
@@ -196,20 +166,15 @@ class ItemController extends Controller
             'max_uv_index' => 'nullable|integer',
             'cloud_cover_threshold' => 'nullable|integer|between:0,100',
             'filepath' => $request->isMethod('post')
-            ? 'required|file|image|max:10240'
+            ? 'required|file|image|max:10240' //auf 10mb angehoben 
             : 'sometimes|file|image|max:10240',
         ]);
     }
 
-    /**
-     * save image
-     */
     private function saveImage($image)
     {
         $filename = Carbon::now()->format('Y-m-d-H_i_s').'_'.$image->getClientOriginalName();
-        // clean image name
         $filename = preg_replace('~[^\w\d\-_\(\)\[\]\.]~', '', $filename);
-        // save image
         $filepath = $image->storeAs('images/items', $filename, 'public');
 
         return $filepath;

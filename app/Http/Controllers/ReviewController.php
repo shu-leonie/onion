@@ -1,37 +1,45 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Item;
+use App\Models\Category;
+use App\Models\Tag;
 use App\Models\SelectedOutfit;
 
 class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        $allItems = SelectedOutfit::with(['item.category', 'item.tags'])
+        $date = $request->input('date');
+        
+        $items = SelectedOutfit::with([
+                'item.category',
+                'item.tags'
+            ])
             ->where('user_id', auth()->id())
-            ->latest() 
-            ->get();
+            ->where(function($query) {
+                $query->where('has_been_reviewed', false)
+                      ->orWhere('has_been_reviewed', 0)
+                      ->orWhereNull('has_been_reviewed');
+            })
+            ->whereDate('created_at', $date)
+            ->get()
+            ->filter(function ($entry) {
+                return $entry->item !== null;
+            })
+            ->map(function ($entry) {
+                return array_merge([
+                    'outfit_entry_id' => $entry->id,
+                    'outfit_date' => $entry->created_at->toDateString(),
+                ], $entry->item->toArray());
+            });
 
-        $unreviewedItems = $allItems->filter(function($entry) {
-            return empty($entry->has_been_reviewed);
-        });
-
-        if ($unreviewedItems->isEmpty()) {
+        if ($items->isEmpty()) {
             return view('error', ['error_message' => "Anscheinend gibt es hier nichts zu reviewen :)"]);
         }
-
-        $latestTime = $unreviewedItems->first()->created_at;
-
-        $items = $unreviewedItems->filter(function($entry) use ($latestTime) {
-            return $entry->created_at->diffInSeconds($latestTime) <= 5 && $entry->item !== null;
-        })->map(function ($entry) {
-            return array_merge([
-                'outfit_entry_id' => $entry->id,
-                'outfit_date' => $entry->created_at->toDateString(),
-            ], $entry->item->toArray());
-        });
 
         return view('review', ['items' => $items]);
     }
