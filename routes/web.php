@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SelectedOutfitController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeatherController;
@@ -46,7 +46,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::resource('items', ItemController::class)->middleware('auth');
-Route::resource('categories', CategoryController::class);
 Route::resource('tags', TagController::class)->except(['show'])->middleware('auth');
 
 Route::put('/user/offset', [UserController::class, 'updateOffset'])->name('user.updateOffset');
