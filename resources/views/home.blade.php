@@ -363,4 +363,5 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endsection
 </body>
+
 </html>
