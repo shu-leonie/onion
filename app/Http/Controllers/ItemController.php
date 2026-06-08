@@ -137,13 +137,13 @@ class ItemController extends Controller
             $status = 'success';
             $message = 'Die Änderungen wurden erfolgreich gespeichert.';
 
-        if ($request->expectsJson()) {
-            return response()->json([
-            'status' => $status,
-            'item' => $item,
-            'message' => $message,
-        ], $status === 'success' ? 200 : 500);
-}
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => $status,
+                    'item' => $item,
+                    'message' => $message,
+                ], $status === 'success' ? 200 : 500);
+            }
 
         } catch (Exception $e) {
             $status = 'error';
@@ -152,6 +152,7 @@ class ItemController extends Controller
                 return response()->json([
                     'status' => $status,
                     'message' => $message,
+                    'error' => $e->getMessage(),
                 ], 500);
             }
         }
@@ -169,14 +170,18 @@ class ItemController extends Controller
                 Storage::disk('public')->delete($item->filepath);
             }
             $item->delete();
-            $status = 'success';
-            $message = 'Das Kleidungsstück wurde gelöscht.';
-        } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Löschen des Kleidungsstücks ist ein Fehler aufgetreten.';
-        }
 
-        return redirect(route('items.index'))->with($status, $message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Das Kleidungsstück wurde gelöscht.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Löschen des Kleidungsstücks ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

@@ -17,13 +17,17 @@ class UserController extends Controller
                 'temperature_offset' => $user->temperature_offset + $request->input('temperature_offset'),
             ]);
 
-            $status = 'success';
-            $message = 'Die Änderungen wurden erfolgreich gespeichert.';
+            return response()->json([
+                'success' => true,
+                'message' => 'Die Änderungen wurden erfolgreich gespeichert.',
+                'temperature_offset' => $user->temperature_offset,
+            ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return redirect()->back()->with($status, $message);
     }
 }

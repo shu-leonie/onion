@@ -17,14 +17,19 @@ class SelectedOutfitController extends Controller
                 'item_id' => $item->id,
             ]);
 
-            $status = 'success';
-            $message = 'Das Kleidungsstück wurde erfolgreich zum Outfit hinzugefügt.';
+            return response()->json([
+                'success' => true,
+                'message' => 'Das Kleidungsstück wurde erfolgreich zum Outfit hinzugefügt.',
+                'item' => $item,
+                'item_id' => $item->id,
+            ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Hinzufügen des Kleidungsstücks zum Outfit ist ein Fehler aufgetreten.';
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Hinzufügen des Kleidungsstücks zum Outfit ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return redirect()->back()->with($status, $message);
     }
 
     /**
@@ -36,11 +41,17 @@ class SelectedOutfitController extends Controller
             $selectedOutfit->has_been_reviewed = $is_reviewed;
             $selectedOutfit->save();
 
-            $status = 'success';
-            $message = 'Review wurde erfolgreich gespeichert.';
+            return response()->json([
+                'success' => true,
+                'message' => 'Review wurde erfolgreich gespeichert.',
+                'selectedOutfit' => $selectedOutfit,
+            ]);
         } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern des Reviews ist ein Fehler aufgetreten.';
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Speichern des Reviews ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
 
         return redirect()->back()->with($status, $message);
