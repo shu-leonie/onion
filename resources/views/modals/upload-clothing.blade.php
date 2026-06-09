@@ -1,8 +1,3 @@
-<!-- Button für das Upload-Modal -->
-<button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#uploadModal">
-  <i class="bi bi-upload"></i> KLEIDUNGSSTÜCK HOCHLADEN
-</button>
-
 <!-- Upload-Modal mit Tag-Auswahl -->
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true"
      style="position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%;">

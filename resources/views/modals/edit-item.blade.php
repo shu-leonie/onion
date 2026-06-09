@@ -1,7 +1,3 @@
-<div id="test-item-card" style="cursor:pointer;">
-    Test Kleidungsstück anklicken
-</div>
-
 <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true"
      style="position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%;">
   <div class="modal-dialog modal-lg">

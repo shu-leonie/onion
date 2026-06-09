@@ -235,7 +235,6 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
         gap: 20px;
     }
 
-    /* Logo oben links statt seitlich */
     .side-area.branding {
         grid-column: 1;
         grid-row: 1;
@@ -245,7 +244,7 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
         padding-bottom: 0;
     }
 
-    /* Wetter oben rechts statt seizlich */
+
     .side-area.info {
         grid-column: 2;
         grid-row: 1;
@@ -277,7 +276,6 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
 }
 
 @media (max-width: 768px) {
-    /* Mobile-Only Button am Ende der Seite (und nicht unter dem onion logo...)*/
     .mobile-only { 
         display: block; 
         width: 100%; 
@@ -292,7 +290,6 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
 .d-none { display: none !important; }
 
 
-/* Styling für alle Modal-Buttons */
 .btn-primary,
 .btn-success {
     background-color: #D2A679 !important; 
@@ -304,7 +301,6 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Hover-Effekt für die Buttons */
 .btn-primary:hover,
 .btn-success:hover {
     background-color: #c49668 !important; 
@@ -384,4 +380,274 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     width: 80px;
     height: 80px;
     object-fit: contain;
+}
+
+
+
+.review-btn {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #444;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%;
+    max-width: 450px;
+    cursor: pointer;
+    border: none;
+    height: 120px; 
+    background-color: white;
+}
+
+.review-btn:hover {
+    transform: scale(1.05);
+    background-color: #fcfcfc;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    color: #111;
+    font-weight: 400;
+}
+
+.review-item {
+    width: 180px; 
+    height: 180px; 
+    object-fit: contain; 
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.3));
+    position: relative;
+}
+
+@media (max-width: 1200px) {
+    .outfit-display {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        margin-top: 40px;
+        justify-content: center;
+    }
+    .outfit-display div { margin-top: 0 !important; }
+    .review-item { margin-top: 0 !important; margin-left: -40px; }
+}
+
+.feedback-wrapper {
+    min-height: 100vh; 
+    text-align: center; 
+    padding-top: 80px;
+}
+
+.feedback-onion-img {
+    width: 700px; 
+    margin-bottom: 2rem; 
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.feedback-text {
+    color: #444; 
+    font-weight: 300; 
+    font-size: 2.2rem; 
+    max-width: 600px; 
+    padding: 0 20px;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.closet-item {
+    width: 140px; 
+    height: 140px; 
+    cursor: pointer; 
+    background: white; 
+    border-radius: 50%; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    padding: 10px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: transform 0.2s;
+    overflow: hidden; 
+}
+
+.closet-item img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    display: block;
+}
+
+
+
+.back-to-config {
+    text-decoration: none;
+    color: #444;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-bottom: 10px;
+    display: block;
+    text-transform: lowercase;
+}
+
+.back-to-config:hover {
+    text-decoration: underline;
+}
+
+.user-greeting {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.user-greeting p {
+    font-size: 1.8rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+
+.side-pill {
+    background-color: #ffffff;
+    color: #444;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 100px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-decoration: none;
+    margin-bottom: 15px;
+    display: inline-block;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s, background-color 0.2s;
+    width: fit-content;
+}
+
+.side-pill:hover {
+    background-color: #fcfcfc;
+    transform: scale(1.03);
+}
+
+
+.closet-header {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    align-self: flex-start; 
+    margin-left: 0;
+}
+
+
+.profile-capsule {
+    justify-content: space-between !important; 
+    padding: 0 60px !important; 
+    cursor: default;
+}
+
+.capsule-label {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #444;
+}
+
+/* Das Bild in der Profil-Pille */
+.item-display {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-display img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.2));
+}
+
+
+.closet-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.outfit-preview {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    width: 100%;
+    gap: 15px; 
+}
+
+.category-group {
+    display: flex;          
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+}
+
+.layer {
+    width: 140px;
+    margin-left: -70px;    
+    position: relative;
+}
+
+.category-group .layer:first-child {
+    margin-left: 0;
+}
+
+.layer-head {
+    top: 0;
+}
+
+.layer-upper {
+    top: 90px;
+}
+
+.layer-lower {
+    top: 250px;
+}
+
+.layer-feet {
+    top: 430px;
+}
+
+.category-stack {
+    position: relative;
+    width: 250px;
+    height: 120px;
+}
+
+.category-stack img {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+.feedback-wrapper {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1 / -1; 
+    text-align: center;
+    padding: 0px;
+}
+
+
+.feedback-onion-img {
+    width: 450px !important; 
+    height: auto;
+    margin-bottom: 2rem;
+}
+
+.feedback-text-container {
+    font-family: 'Figtree', sans-serif;
+    color: #444;
+    font-size: 1.5rem; 
+    max-width: 500px;
+}
+
+.feedback-text-container small {
+    font-size: 0.8rem;
+    color: #444;
+    display: block;
+    margin-top: 15px;
 }

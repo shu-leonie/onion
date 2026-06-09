@@ -50,10 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const cloudCoverSampleImage = cloudDiv.querySelector('img');
-    const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
-    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
-    cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+
+    if (cloudDiv) {
+        const cloudCoverSampleImage = cloudDiv.querySelector('img');
+        const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
+        if(cloudCoverSampleImage && cloudCoverSlider) {
+            cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+            cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+        }
+    }
 
     nextPageButton.addEventListener("click", nextPage);
     previousPageButton.addEventListener("click", previousPage);
@@ -77,9 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 modalEl.addEventListener('show.bs.modal', function () {
     const uploadTagSelection = document.getElementById('uploadTagSelection');
-    if (uploadTagSelection && tags.length > 0) {
+
+    if (uploadTagSelection && window.tags && window.tags.length > 0) {
         uploadTagSelection.innerHTML = '';
-        tags.forEach((tag) => {
+        window.tags.forEach((tag) => {
             addNewTagToItemModal(tag.name, tag.id);
         });
     }
@@ -99,7 +105,8 @@ export function addNewTagToItemModal(name, tagId) {
         if (newCheckboxElement.checked) {
             itemForUpload.tags.push(tagId);
         } else {
-            const i = itemForUploa.tags.indexOf(tagId)
+
+            const i = itemForUpload.tags.indexOf(tagId)
             if (i > -1) itemForUpload.tags.splice(i, 1)
         }
     });
@@ -113,7 +120,6 @@ function nextPage() {
     if(!imageInput.files || !imageInput.files[0] || itemName == '' || !category) {
         errorDiv.innerHTML = 'Es müssen zuerst alle Felder ausgefüllt werden.';
         errorDiv.classList.remove('d-none');
-        
         return;
     }
 
@@ -188,7 +194,6 @@ function uploadItem() {
 
     if(itemForUpload.category_id === 10) { //Sonnenbrille
         itemForUpload.cloud_cover_threshold = cloudDiv.querySelector('#cloud-cover-range').value;
-
         itemForUpload.min_temperature = null;
         itemForUpload.max_temperature = null;
         itemForUpload.min_uv_index = null;
@@ -196,7 +201,8 @@ function uploadItem() {
         itemForUpload.is_waterproof = null;
     } else if(itemForUpload.category_id === 11) { //Sonnencreme
         itemForUpload.min_uv_index = uvDiv.querySelector("#uv-min").value;
-        itemForUpload.min_uv_index = uvDiv.querySelector("#uv-max").value;
+
+        itemForUpload.max_uv_index = uvDiv.querySelector("#uv-max").value;
 
         itemForUpload.min_temperature = null;
         itemForUpload.max_temperature = null;
@@ -257,22 +263,14 @@ function uploadItem() {
             const modalEl = document.getElementById('uploadModal');
             const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
-            //KLEIDUNGSSTÜCK ÜBER FUNKTION ZU ITEMS AUF DER SEITE HINZUFÜGEN?
             modal.hide();
-            generalAttributesDiv.classList.remove("d-none");
-            specialAttributesDiv.classList.add("d-none");
-            previousPageButton.classList.add("d-none");
-            submitButton.classList.add("d-none");
-            nextPageButton.classList.remove("d-none");
-            currentPage = 0;
-            hideAllAttributes();
-            resetAllAttributes();
+        
+            window.location.reload();
         } else {
             errorDiv.innerHTML = data.message;
             errorDiv.classList.remove('d-none');
         }
     });
-
 }
 
 function hideAllAttributes() {
@@ -293,20 +291,19 @@ function resetAllAttributes() {
     document.getElementById("clothingCategory").selectedIndex = 0;
 
     const tagContainer = document.getElementById("uploadTagSelection");
-    tagContainer.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        cb.checked = false;
-    });
-
+    if(tagContainer) {
+        tagContainer.querySelectorAll("input[type='checkbox']").forEach(cb => {
+            cb.checked = false;
+        });
+    }
 
     ignoreWaterproofness.checked = false;
     waterproofnessSwitch.checked = false;
 
     document.getElementById('temp-min').value = 0;
     document.getElementById('temp-max').value = 10;
-
     document.getElementById('uv-min').value = 1;
     document.getElementById('uv-max').value = 7;
-
     document.getElementById('cloud-cover-range').value = 50;
 
     document.getElementById('rangeValue-min-temp').textContent = 0;
@@ -338,11 +335,14 @@ function bindRangeOutput(rangeId, outputId) {
 
     range.addEventListener("input", update);
     output.addEventListener("input", update2);
-    update(); // initialer Wert beim Laden
+    update();
 }
 
 function calculateCloudCoverImage() {
+    if(!cloudDiv) return;
     const cloudCoverSampleImage = cloudDiv.querySelector('img');
     const cloudCoverSlider = cloudDiv.querySelector('#cloud-cover-range');
-    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    if(cloudCoverSampleImage && cloudCoverSlider) {
+        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+    }
 }
