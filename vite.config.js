@@ -10,15 +10,16 @@ export default defineConfig({
                 'resources/css/custom.css',
                 'resources/css/profile.css',
                 'resources/css/profile/modals.css',
-                'resources/css/profile/variables.css',
-                'resources/css/profile/layout.css',
-                'resources/css/profile/components.css',
+                //'resources/css/profile/variables.css',
+                //'resources/css/profile/layout.css',
+                //'resources/css/profile/components.css',
 
-                'resources/js/custom.js',
-                // 'resources/js/modal.js',
                 'resources/js/profile/create-item-modal.js',
                 'resources/js/profile/edit-item-modal.js',
                 'resources/js/profile/tag-modal.js',
+
+                'resources/js/home/geolocation.js',
+                'resources/js/home/get-weather.js'
             ],
 
             refresh: true,

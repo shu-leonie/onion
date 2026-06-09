@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>on¿on - Konfigurator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
-    <script>
-        window.wardrobe_inventory = @json($recommendations);
-    </script>
-</head>
+@extends('layouts.app')
+@vite(['resources/js/home/geolocation.js', 'resources/js/home/get-weather.js'])
+<script>
+    window.wardrobe_inventory = @json($recommendations);
+</script>
 
 <body data-tags="{{ json_encode($tags) }}">
-
-@extends('layouts.app')
 
 @section('content')
 <main class="wrapper">
@@ -111,11 +99,11 @@
 
             <div class="city-search">
                 <input type="text" id="cityInput" placeholder="Ort eingeben">
-                <button class="btn-primary" onclick="getWeatherByCity()">Ändern</button>
+                <button class="btn-primary" id="weatherBtn">Ändern</button>
             </div>
             <p id="cityError" class="city-error"></p>
 
-            <button class="location-link" onclick="getLocation()">
+            <button class="location-link" id="locationBtn">
                 <i class="bi bi-crosshair"></i>
                 Aktuellen Standort nutzen
             </button>
@@ -136,7 +124,7 @@
         </div>
     </aside>
 
-    <div class="grid d-none" id="tags">
+    <div class="grid" id="tags">
         @foreach($tags as $tag)
         <div>
             <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" />
@@ -146,61 +134,8 @@
     </div>
 </main>
 
-<div class="mt-2">
-</div>
-
-<div class="mt-3">
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@vite(['resources/js/modal.js'])
 
-<script>
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
-    } else {
-        alert("Geolocation wird nicht unterstützt.");
-    }
-}
-
-function success(position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-    window.location.href = `/?latitude=${lat}&longitude=${lon}`;
-}
-
-function error(error) {
-    if (error.code === 1) {
-        document.getElementById("locationInfoText").innerHTML = "Standortzugriff wurde abgelehnt. Bitte Ort manuell eingeben.";
-    } else if (error.code === 2) {
-        document.getElementById("locationInfoText").innerHTML = "Standort konnte nicht ermittelt werden.";
-    } else if (error.code === 3) {
-        document.getElementById("locationInfoText").innerHTML = "Zeitüberschreitung beim Standortabruf.";
-    } else {
-        document.getElementById("locationInfoText").innerHTML = "Unbekannter Standortfehler.";
-    }
-}
-
-async function getWeatherByCity() {
-    const city = document.getElementById("cityInput").value;
-    if (!city) return;
-
-    try {
-        const response = await fetch(`/weather/city?city=${encodeURIComponent(city)}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-            document.getElementById("cityError").innerHTML = data.error || "Fehler beim Abrufen des Wetters.";
-            return;
-        }
-        document.getElementById("cityError").innerHTML = "";
-        window.location.href = `/?latitude=${data.latitude}&longitude=${data.longitude}`;
-    } catch (e) {
-        document.getElementById("cityError").innerHTML = "Netzwerkfehler.";
-    }
-}
-</script>
 
 @php
     $jsInventory = [];
