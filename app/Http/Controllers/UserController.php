@@ -30,7 +30,7 @@ class UserController extends Controller
             }
 
             return view('review-success', [ //uh yea jetzt bekommt ner nutzer ein feedback das alles geklappt hat :)
-                'offset' => $request->input('temperature_offset')
+                'offset' => $request->input('temperature_offset'),
             ]);
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.');
