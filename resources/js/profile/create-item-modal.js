@@ -244,7 +244,7 @@ function uploadItem() {
         formData.append('tags[]', tag);
     });
 
-    fetch('/save-item', {
+    fetch('items', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
