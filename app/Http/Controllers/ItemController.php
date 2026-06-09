@@ -12,6 +12,21 @@ use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
+    public function index()
+    {
+        return view('items.index', [
+            'items' => Item::with('category', 'tags')->get(),
+        ]);
+    }
+
+    public function create()
+    {
+        return view('items.create', [
+            'categories' => Category::all(),
+            'tags' => Tag::all(),
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $this->validateRequest($request); 
@@ -49,6 +64,20 @@ class ItemController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function show(Item $item)
+    {
+        
+    }
+
+    public function edit(Item $item)
+    {
+        return view('items.edit', [
+            'item' => $item,
+            'categories' => Category::all(),
+            'tags' => Tag::all(),
+        ]);
     }
 
     public function update(Request $request, Item $item)

@@ -1,9 +1,10 @@
 let editingItemId = null;
+let editingItemCategoryId = null;
 const allTags = window.tags || [];
-
 
 window.openEditItemModal = function(item) {
     editingItemId = item.id;
+    editingItemCategoryId = item.category_id;
     document.getElementById('editItemName').value = item.name;
 
     const tagContainer = document.getElementById('editItemTagSelection');
@@ -51,13 +52,12 @@ window.openEditItemModal = function(item) {
     editItemUvMax.value = item.max_uv_index != null ? item.max_uv_index : 7;
     editItemCloudCoverRange.value = item.cloud_cover_threshold != null ? item.cloud_cover_threshold : 50;
     editItemWaterproofSwitch.checked = item.is_waterproof != null ? item.is_waterproof : false;
-    editItemCategory.value = item.category_id;
 
-    document.getElementById('editItemRangeValueMinTemp').value = editItemTempMin.value;
-    document.getElementById('editItemRangeValueMaxTemp').value = editItemTempMax.value;
-    document.getElementById('editItemRangeValueMinUv').value = editItemUvMin.value;
-    document.getElementById('editItemRangeValueMaxUv').value = editItemUvMax.value;
-    document.getElementById('editItemRangeValueClouds').value = editItemCloudCoverRange.value;
+    document.getElementById('editItemRangeValueMinTemp').textContent = editItemTempMin.value;
+    document.getElementById('editItemRangeValueMaxTemp').textContent = editItemTempMax.value;
+    document.getElementById('editItemRangeValueMinUv').textContent = editItemUvMin.value;
+    document.getElementById('editItemRangeValueMaxUv').textContent = editItemUvMax.value;
+    document.getElementById('editItemRangeValueClouds').textContent = editItemCloudCoverRange.value;
 
     const editItemMinUvRange = document.getElementById('editItemMinUvGroup');
     const editItemMaxUvRange = document.getElementById('editItemMaxUvGroup');
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         editItemSubmitButton.addEventListener('click', async function () {
             const updatedItem = {
                 name: document.getElementById('editItemName').value,
-                category_id: Number(document.getElementById('editItemCategory').value),
+                category_id: editingItemCategoryId,
                 is_waterproof: document.getElementById('editItemWaterproofSwitch').checked,
                 min_temperature: document.getElementById('editItemMinTempGroup').classList.contains('d-none')
                     ? null : Number(document.getElementById('editItemTempMin').value),
@@ -200,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (!response.ok || data.status === 'error') {
+                console.log("Laravel Fehler:", data);
                 editItemModalError.textContent = 'Kleidungsstück konnte nicht gespeichert werden.';
                 editItemModalError.classList.remove('d-none');
                 return;
@@ -215,4 +216,32 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.reload();
         });
     }
+
+    const deleteItemButton = document.getElementById('deleteItemButton');
+
+    if (deleteItemButton) {
+        deleteItemButton.addEventListener('click', async function () {
+
+            const isConfirmed = confirm('Bist du dir ganz ganz sicher, dass du dieses Kleidungsstück löschen möchtest?\n(Das kann nicht rückgängig gemacht werden.)');
+            
+            if (!isConfirmed) {
+                return; 
+            }
+
+            const response = await fetch(`/items/${editingItemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const data = await response.json();
+
+            window.location.reload();
+        });
+    }
+
+
+    
 });

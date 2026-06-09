@@ -85,6 +85,7 @@
       </div>
 
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger me-auto" id="deleteItemButton">Löschen</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
         <button type="button" class="btn btn-primary" id="editItemSubmitButton">Änderungen speichern</button>
       </div>

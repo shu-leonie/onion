@@ -19,6 +19,7 @@ class RecommendationController extends Controller
             ->where('has_been_reviewed', false)
             ->whereDate('created_at', today())
             ->exists();
+            
         if ($hasPendingOutfitToday) {
             return redirect()->route('outfit.review', [
                 'date' => now()->toDateString()
@@ -39,6 +40,7 @@ class RecommendationController extends Controller
         } else if(isset($location['error']) && $location['error'] === 'Unable to geocode') {
             $location['display_name'] = "Standort unbekannt";
         }
+        
         $weather = $weatherService->getWeather($latitude, $longitude);
         //$weather=false;   Test für Fehlerseite
         if (!$weather) {
@@ -46,18 +48,16 @@ class RecommendationController extends Controller
                 'error_message' => 'Die Wetterdaten konnten derzeit nicht geladen werden. Bitte versuche es später erneut.'
             ]);
         }
+        
         $currentTime = $this->getCurrentHourIndex($weather['time']);
         if ($currentTime === -1) {
             return view('error', [
                 'error_message' => 'Die Wetterdaten konnten derzeit nicht verarbeitet werden. Bitte versuche es später erneut.'
             ]);
         }
-
         if (Auth::guest()) {
-            $kleidungsstuecke = Item::with(['category', 'tags'])
-                ->WhereNull('user_id')
-                ->get();
-            $tags = Tag::whereNull('user_id')->get();
+            $kleidungsstuecke = collect([]); 
+            $tags = collect([]);
         } else {
             $kleidungsstuecke = Item::with(['category', 'tags'])
                 ->where('user_id', Auth::id())
@@ -69,25 +69,28 @@ class RecommendationController extends Controller
                 })
                 ->get();
         }
+        
         $recommendations = [];
         foreach ($kleidungsstuecke as $item) {
             if ($recService->isRecommended($item, $currentTime, $weather)) {
                 $recommendations[] = $item;
             }
         }
-        $recommendationsForFrontend = $this->formatForFrontend($recommendations);
+
+        $neededCategories = $this->getNeededCategories($weather, $currentTime);
         
-        $categoryMap = Category::all() //Wenn kein gemapptes array gebraucht wird, ab hier löschen
+        $recommendationsForFrontend = $this->formatForFrontend($recommendations, $neededCategories);
+        
+        $categoryMap = Category::all()
             ->map(function ($category) {
                 return $this->mapCategoryName($category->name);
             })
-            ->filter()   // entfernt nulls
-            ->values()   // reindexiert 0..n
+            ->filter()
+            ->values()
             ->toArray();
 
-            
         return view('home', [
-            'recommendations' => $recommendationsForFrontend/* NACH DEN TESTS AUF DAS ÄNDERN$recommendations*/,
+            'recommendations' => $recommendationsForFrontend,
             'tags' => $tags,
             'categories' => $categoryMap,
             'weather' => $weather,
@@ -109,48 +112,62 @@ class RecommendationController extends Controller
         return -1;
     }
 
-    private function formatForFrontend($recommendations) {
+    //hab ne kelien logit für die platzhalter dazugebaut...
+    private function getNeededCategories($weather, $currentTime)
+    {
+        $temp = $weather['apparentTemperature'][$currentTime] ?? 15;
+        $rain = $weather['precipitation'][$currentTime] ?? 0;
+        $uv = $weather['uvIndex'][$currentTime] ?? 0;
+
+        $needed = ['upper_shirt', 'lower_pants', 'feet_shoes'];
+
+        if ($temp < 20) {
+            $needed[] = 'upper_pulli';
+            $needed[] = 'feet_socks';
+        }
+        if ($temp < 15 || $rain > 0) {
+            $needed[] = 'upper_jacke';
+        }
+        if ($temp < 5) {
+            $needed[] = 'head'; 
+        }
+        if ($uv > 3) {
+            $needed[] = 'sunglasses';
+        }
+
+        return $needed;
+    }
+
+    private function formatForFrontend($recommendations, $neededCategories) {
         $categoryMap = [
             'Kopfbedeckung'   => 'head',
-
             'T-Shirt'         => 'upper_shirt',
             'Pullover'        => 'upper_pulli',
             'Jacke'           => 'upper_jacke',
-
             'Hose'            => 'lower_pants',
             'Strumpfhose'     => 'lower_tights',
-
             'Socken'          => 'feet_socks',
             'Schuhe'          => 'feet_shoes',
-
             'Accessoires'     => 'hand',
             'Sonnenbrille'    => 'sunglasses',
             'Sonnencreme'     => 'sunscreen',
         ];
 
-        $result = [
-            'head' => [],
+        $result = [];
 
-            'upper_shirt' => [],
-            'upper_pulli' => [],
-            'upper_jacke' => [],
-
-            'lower_pants' => [],
-            'lower_tights' => [],
-
-            'feet_socks' => [],
-            'feet_shoes' => [],
-
-            'hand' => [],
-            'sunglasses' => [],
-            'sunscreen' => [],
-        ];
+        foreach ($neededCategories as $cat) {
+            $result[$cat] = [];
+        }
 
         foreach ($recommendations as $item) {
             if (!$item->category) continue;
 
             $key = $categoryMap[$item->category->name] ?? null;
             if (!$key) continue;
+
+            if (!isset($result[$key])) {
+                $result[$key] = [];
+            }
 
             $result[$key][] = [
                 'id' => $item->id,
@@ -163,7 +180,6 @@ class RecommendationController extends Controller
                 'maxtemp' => $item->max_temperature,
                 'mintemp' => $item->min_temperature,
                 'creationdate' => $item->created_at,
-                // TAGS (id + name)
                 'tags' => $item->tags->map(function ($tag) {
                     return [
                         'id' => $tag->id,
@@ -179,23 +195,17 @@ class RecommendationController extends Controller
     {
         return match ($name) {
             'Kopfbedeckung' => 'head',
-
             'T-Shirt' => 'upper_shirt',
             'Pullover' => 'upper_pulli',
             'Jacke' => 'upper_jacke',
-
             'Hose' => 'lower_pants',
             'Strumpfhose' => 'lower_tights',
-
             'Socken' => 'feet_socks',
             'Schuhe' => 'feet_shoes',
-
             'Accessoires' => 'hand',
             'Sonnenbrille' => 'sunglasses',
             'Sonnencreme' => 'sunscreen',
-
             default => null,
         };
     }
-
 }
