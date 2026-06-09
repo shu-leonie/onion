@@ -29,10 +29,28 @@ class UserController extends Controller
                     ->update(['has_been_reviewed' => true]);
             }
 
-            return view('review-success', [ //uh yea jetzt bekommt ner nutzer ein feedback das alles geklappt hat :)
-                'offset' => $request->input('temperature_offset'),
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Die Änderungen wurden erfolgreich gespeichert.',
+                    'temperature_offset' => $user->temperature_offset,
+                ]);
+            }
+
+            return view('review-success', [
+                'offset' => $request->input('temperature_offset')
             ]);
+
         } catch (Exception $e) {
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+
             return redirect()->back()->with('error', 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.');
         }
     }

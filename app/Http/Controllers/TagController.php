@@ -35,7 +35,7 @@ class TagController extends Controller
         ]);
 
         try {
-            $tag=Tag::create([
+            $tag = Tag::create([
                 'name' => $request->name,
                 'user_id' => $request->user()->id,
             ]);
@@ -47,7 +47,8 @@ class TagController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Beim Speichern des Tags ist ein Fehler aufgetreten.'
+                'message' => 'Beim Speichern des Tags ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
             ], 500);
         }
 
@@ -79,11 +80,12 @@ class TagController extends Controller
                 'status' => 'success',
                 'tag' => $tag,
             ]);
-            
+
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.'
+                'message' => 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -95,15 +97,17 @@ class TagController extends Controller
     {
         try {
             $tag->delete();
+
             return response()->json([
-            'status' => 'success',
-            'message' => 'Der Tag wurde erfolgreich gelöscht.'
-        ]);
+                'status' => 'success',
+                'message' => 'Der Tag wurde erfolgreich gelöscht.',
+            ]);
         } catch (Exception $e) {
-           return response()->json([
-            'status' => 'error',
-            'message' => 'Beim Löschen des Tags ist ein Fehler aufgetreten.'
-        ], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Beim Löschen des Tags ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

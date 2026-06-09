@@ -30,8 +30,7 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateRequest($request); 
-        //validateRequest statt vallidate... (laravel hat bereits eune validate funktion // 
-        // nicht das wir desshalb irgendwelche random bugs bekommen)
+
 
         if (! empty($validated['tags'])) {
             $tags = $validated['tags'];
@@ -115,7 +114,7 @@ class ItemController extends Controller
                     'status' => $status,
                     'item' => $item,
                     'message' => $message,
-                ], 200);
+                ], $status === 'success' ? 200 : 500);
             }
 
             return redirect()->back()->with($status, $message);
@@ -128,6 +127,7 @@ class ItemController extends Controller
                 return response()->json([
                     'status' => $status,
                     'message' => $message,
+                    'error' => $e->getMessage(),
                 ], 500);
             }
 
@@ -142,14 +142,18 @@ class ItemController extends Controller
                 Storage::disk('public')->delete($item->filepath);
             }
             $item->delete();
-            $status = 'success';
-            $message = 'Das Kleidungsstück wurde gelöscht.';
-        } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Löschen des Kleidungsstücks ist ein Fehler aufgetreten.';
-        }
 
-        return redirect(route('items.index'))->with($status, $message);
+            return response()->json([
+                'success' => true,
+                'message' => 'Das Kleidungsstück wurde gelöscht.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beim Löschen des Kleidungsstücks ist ein Fehler aufgetreten.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     private function validateRequest(Request $request)
