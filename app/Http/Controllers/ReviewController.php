@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
@@ -13,48 +14,33 @@ class ReviewController extends Controller
     public function index(Request $request)
     {
         $date = $request->input('date');
+        
         $items = SelectedOutfit::with([
                 'item.category',
                 'item.tags'
             ])
             ->where('user_id', auth()->id())
-            ->where('has_been_reviewed', false)
+            ->where(function($query) {
+                $query->where('has_been_reviewed', false)
+                      ->orWhere('has_been_reviewed', 0)
+                      ->orWhereNull('has_been_reviewed');
+            })
             ->whereDate('created_at', $date)
             ->get()
+            ->filter(function ($entry) {
+                return $entry->item !== null;
+            })
             ->map(function ($entry) {
-                return [
+                return array_merge([
                     'outfit_entry_id' => $entry->id,
                     'outfit_date' => $entry->created_at->toDateString(),
-
-                    ...$entry->item->toArray()
-                ];
+                ], $entry->item->toArray());
             });
-         /* Sollte theoretisch sowas liefern
-        [
-            {
-                "outfit_entry_id": 15,
-                "outfit_date": "2026-05-15",
-
-                "id": 12,
-                "name": "Winterjacke",
-                "filepath": "/img/jacket.jpg",
-
-                "category": {
-                    ...
-                },
-
-                "tags": [
-                    ...
-                ]
-            }
-        ]
-        */
 
         if ($items->isEmpty()) {
             return view('error', ['error_message' => "Anscheinend gibt es hier nichts zu reviewen :)"]);
-        } else {
-            return view('review', ['items' => $items]);
         }
-    }
 
+        return view('review', ['items' => $items]);
+    }
 }

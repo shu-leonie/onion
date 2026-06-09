@@ -6,9 +6,58 @@ use App\Models\Item;
 use App\Models\SelectedOutfit;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
 
 class SelectedOutfitController extends Controller
 {
+    /*public function storeOutfit(Request $request) //baut array von item ids zusammen uzm komplettes outfit zu speichern
+    {
+        $request->validate([
+            'item_ids' => 'required|array',
+            'item_ids.*' => 'exists:items,id',
+        ]);
+
+        foreach ($request->input('item_ids') as $itemId) {
+            SelectedOutfit::create([
+                'user_id' => auth()->id(),
+                'item_id' => $itemId,
+                'has_been_reviewed' => false,
+            ]);
+        }
+
+        return redirect()->route('outfit.review', [
+            'date' => now()->toDateString()
+        ]);
+    }*/
+
+    public function storeOutfit(Request $request)
+    {
+        $request->validate([
+            'item_ids' => 'required|array',
+            'item_ids.*' => 'exists:items,id',
+        ]);
+        SelectedOutfit::where('user_id', auth()->id())
+            ->whereDate('created_at', now()->toDateString())
+            ->where(function($query) {
+                $query->where('has_been_reviewed', false)
+                      ->orWhere('has_been_reviewed', 0)
+                      ->orWhereNull('has_been_reviewed');
+            })
+            ->delete();
+
+        foreach ($request->input('item_ids') as $itemId) {
+            $outfit = new SelectedOutfit();
+            $outfit->user_id = auth()->id();
+            $outfit->item_id = $itemId;
+            $outfit->has_been_reviewed = 0;
+            $outfit->save();
+        }
+
+        return redirect()->route('outfit.review', [
+            'date' => now()->toDateString()
+        ]);
+    }
+
     public function addItem(Item $item)
     {
         try {
@@ -32,10 +81,7 @@ class SelectedOutfitController extends Controller
         }
     }
 
-    /**
-     * Set has_been_reviewed of the given SelectedOutfit to the given boolean value
-     */
-    public function saveReview(SelectedOutfit $selectedOutfit, boolean $is_reviewed)
+    public function saveReview(SelectedOutfit $selectedOutfit, bool $is_reviewed) //bool nicht boolean - php wirft sonst nen fehler...
     {
         try {
             $selectedOutfit->has_been_reviewed = $is_reviewed;
@@ -56,26 +102,4 @@ class SelectedOutfitController extends Controller
 
         return redirect()->back()->with($status, $message);
     }
-
-    /*
-        public function saveReview(Carbon $date)
-    {
-        $user_id = auth()->id();
-
-        try {
-            // set has_been_reviewed to true for all selected outfit entries of the user for the given date
-            SelectedOutfit::where('user_id', $user_id)
-                ->where('date', $date)
-                ->update(['has_been_reviewed' => true]);
-
-            $status = 'success';
-            $message = 'Review wurde erfolgreich gespeichert.';
-        } catch (Exception $e) {
-            $status = 'error';
-            $message = 'Beim Speichern des Reviews ist ein Fehler aufgetreten.';
-        }
-
-        return redirect()->back()->with($status, $message);
-    }
-        */
 }

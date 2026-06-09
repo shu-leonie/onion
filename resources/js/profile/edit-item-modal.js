@@ -1,39 +1,24 @@
 let editingItemId = null;
 const allTags = window.tags || [];
-// später durch echtes Item ersetzen
-const testItem = {
-    id: 1,
-    name: "Test Jacke",
-    waterproof: true,
-    cloudcoverthreshold: 60,
-    maxuv: 3,
-    minuv: 8,
-    maxtemp: 18,
-    mintemp: null,
-    tags: [
-        { id: 1, name: "rain" }
-    ]
-};
 
-function openEditItemModal(item) {
 
+window.openEditItemModal = function(item) {
     editingItemId = item.id;
-
     document.getElementById('editItemName').value = item.name;
 
     const tagContainer = document.getElementById('editItemTagSelection');
-
     tagContainer.innerHTML = '';
 
     allTags.forEach(function(tag) {
-
         let checked = '';
 
-        item.tags.forEach(function(itemTag) {
-            if (itemTag.id === tag.id) {
-                checked = 'checked';
-            }
-        });
+        if (item.tags) {
+            item.tags.forEach(function(itemTag) {
+                if (itemTag.id === tag.id) {
+                    checked = 'checked';
+                }
+            });
+        }
 
         tagContainer.innerHTML += `
             <div class="form-check">
@@ -44,7 +29,6 @@ function openEditItemModal(item) {
                     id="edit-tag-${tag.id}"
                     ${checked}
                 >
-
                 <label class="form-check-label" for="edit-tag-${tag.id}">
                     ${tag.name}
                 </label>
@@ -59,22 +43,19 @@ function openEditItemModal(item) {
     const editItemCloudCoverRange = document.getElementById('editItemCloudCoverRange');
     const editItemWaterproofSwitch = document.getElementById('editItemWaterproofSwitch');
 
-    editItemTempMin.value = item.mintemp;
-    editItemTempMax.value = item.maxtemp;
-    editItemUvMin.value = item.minuv;
-    editItemUvMax.value = item.maxuv;
-    editItemCloudCoverRange.value = item.cloudcoverthreshold;
-    editItemWaterproofSwitch.checked = item.waterproof;
 
-    document.getElementById('editItemRangeValueMinTemp').textContent = item.mintemp;
+    editItemTempMin.value = item.min_temperature != null ? item.min_temperature : 0;
+    editItemTempMax.value = item.max_temperature != null ? item.max_temperature : 10;
+    editItemUvMin.value = item.min_uv_index != null ? item.min_uv_index : 1;
+    editItemUvMax.value = item.max_uv_index != null ? item.max_uv_index : 7;
+    editItemCloudCoverRange.value = item.cloud_cover_threshold != null ? item.cloud_cover_threshold : 50;
+    editItemWaterproofSwitch.checked = item.is_waterproof != null ? item.is_waterproof : false;
 
-    document.getElementById('editItemRangeValueMaxTemp').textContent = item.maxtemp;
-
-    document.getElementById('editItemRangeValueMinUv').textContent = item.minuv;
-
-    document.getElementById('editItemRangeValueMaxUv').textContent = item.maxuv;
-
-    document.getElementById('editItemRangeValueClouds').textContent = item.cloudcoverthreshold;
+    document.getElementById('editItemRangeValueMinTemp').textContent = editItemTempMin.value;
+    document.getElementById('editItemRangeValueMaxTemp').textContent = editItemTempMax.value;
+    document.getElementById('editItemRangeValueMinUv').textContent = editItemUvMin.value;
+    document.getElementById('editItemRangeValueMaxUv').textContent = editItemUvMax.value;
+    document.getElementById('editItemRangeValueClouds').textContent = editItemCloudCoverRange.value;
 
     const editItemMinUvRange = document.getElementById('editItemMinUvGroup');
     const editItemMaxUvRange = document.getElementById('editItemMaxUvGroup');
@@ -83,56 +64,49 @@ function openEditItemModal(item) {
     const editItemCloudRange = document.getElementById('editItemCloudRange');
     const editItemWaterproofness = document.getElementById('editItemWaterproofness');
 
-    if (item.mintemp === null) {
+
+    if (item.min_temperature == null) {
         editItemMinTempRange.classList.add('d-none');
     } else {
         editItemMinTempRange.classList.remove('d-none');
     }
 
-    if (item.maxtemp === null) {
+    if (item.max_temperature == null) {
         editItemMaxTempRange.classList.add('d-none');
     } else {
         editItemMaxTempRange.classList.remove('d-none');
     }
 
-    if (item.minuv === null ) {
+    if (item.min_uv_index == null ) {
         editItemMinUvRange.classList.add('d-none');
     } else {
         editItemMinUvRange.classList.remove('d-none');
     }
 
-    if (item.maxuv === null ) {
+    if (item.max_uv_index == null ) {
         editItemMaxUvRange.classList.add('d-none');
     } else {
         editItemMaxUvRange.classList.remove('d-none');
     }
 
-    if (item.cloudcoverthreshold === null) {
+    if (item.cloud_cover_threshold == null) {
         editItemCloudRange.classList.add('d-none');
     } else {
         editItemCloudRange.classList.remove('d-none');
     }
 
-    if (item.waterproof === null) {
+    if (item.is_waterproof == null) {
         editItemWaterproofness.classList.add('d-none');
     } else {
         editItemWaterproofness.classList.remove('d-none');
     }
 
     const modal = new bootstrap.Modal(document.getElementById('editItemModal'));
-
     modal.show();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    const testCard = document.getElementById('test-item-card');
-
-    if (testCard) {
-        testCard.addEventListener('click', function () {
-            openEditItemModal(testItem);
-        });
-    }
 
     function connectRangeValue(rangeId, outputId) {
         const range = document.getElementById(rangeId);
@@ -161,9 +135,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function calculateCloudCoverImage() {
         const cloudDiv = document.getElementById('editItemCloudRange');
+        if(!cloudDiv) return;
         const cloudCoverSampleImage = cloudDiv.querySelector('img');
         const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
-        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+        if(cloudCoverSampleImage && cloudCoverSlider) {
+            cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+        }
     }
 
     connectRangeValue('editItemTempMin', 'editItemRangeValueMinTemp');
@@ -173,44 +150,33 @@ document.addEventListener('DOMContentLoaded', function () {
     connectRangeValue('editItemCloudCoverRange', 'editItemRangeValueClouds');
 
     const cloudDiv = document.getElementById('editItemCloudRange');
-    const cloudCoverSampleImage = cloudDiv.querySelector('img');
-    const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
-    cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
-    cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+    if (cloudDiv) {
+        const cloudCoverSampleImage = cloudDiv.querySelector('img');
+        const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
+        if (cloudCoverSampleImage && cloudCoverSlider) {
+            cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+            cloudCoverSlider.addEventListener("input", calculateCloudCoverImage);
+        }
+    }
 
     const editItemSubmitButton = document.getElementById('editItemSubmitButton');
     const editItemModalError = document.getElementById('editItemModalError');
 
     if (editItemSubmitButton) {
-
         editItemSubmitButton.addEventListener('click', async function () {
-
             const updatedItem = {
-
                 name: document.getElementById('editItemName').value,
-
                 is_waterproof: document.getElementById('editItemWaterproofSwitch').checked,
-
                 min_temperature: document.getElementById('editItemMinTempGroup').classList.contains('d-none')
-                    ? null
-                    : Number(document.getElementById('editItemTempMin').value),
-
+                    ? null : Number(document.getElementById('editItemTempMin').value),
                 max_temperature: document.getElementById('editItemMaxTempGroup').classList.contains('d-none')
-                    ? null
-                    : Number(document.getElementById('editItemTempMax').value),
-
+                    ? null : Number(document.getElementById('editItemTempMax').value),
                 min_uv_index: document.getElementById('editItemMinUvGroup').classList.contains('d-none')
-                    ? null
-                    : Number(document.getElementById('editItemUvMin').value),
-
+                    ? null : Number(document.getElementById('editItemUvMin').value),
                 max_uv_index: document.getElementById('editItemMaxUvGroup').classList.contains('d-none')
-                    ? null
-                    : Number(document.getElementById('editItemUvMax').value),
-
+                    ? null : Number(document.getElementById('editItemUvMax').value),
                 cloud_cover_threshold: document.getElementById('editItemCloudRange').classList.contains('d-none')
-                    ? null
-                    : Number(document.getElementById('editItemCloudCoverRange').value),
-
+                    ? null : Number(document.getElementById('editItemCloudCoverRange').value),
                 tags: Array.from(
                     document.querySelectorAll('#editItemTagSelection input:checked')
                 ).map(function(input) {
@@ -230,23 +196,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
 
-           if (!response.ok || data.status === 'error') {
-
-            editItemModalError.textContent = 'Kleidungsstück konnte nicht gespeichert werden.';
-
-            editItemModalError.classList.remove('d-none');
-
-            return;
-           }
+            if (!response.ok || data.status === 'error') {
+                editItemModalError.textContent = 'Kleidungsstück konnte nicht gespeichert werden.';
+                editItemModalError.classList.remove('d-none');
+                return;
+            }
 
             const modalElement = document.getElementById('editItemModal');
             const modal = bootstrap.Modal.getInstance(modalElement);
-
             editItemModalError.textContent = '';
-
             editItemModalError.classList.add('d-none');
-
             modal.hide();
+
+
+            window.location.reload();
         });
     }
 });

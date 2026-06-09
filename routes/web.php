@@ -11,6 +11,7 @@ use App\Http\Controllers\WeatherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/onion', [RecommendationController::class, 'index']);
 Route::get('/', [RecommendationController::class, 'index'])->name('onion.home');
 
@@ -31,12 +32,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::get('/review', [ReviewController::class, 'index'])->name('outfit.review');
 
-    Route::post('/save-outfit', function (Request $request) {
+    /*Route::post('/save-outfit', function (Request $request) {
         return response()->json([
             'message' => 'Outfit-IDs empfangen!',
             'daten' => $request->all(),
         ]);
-    })->name('outfit.save');
+    })->name('outfit.save');*/
+
+    Route::post('/save-outfit', [SelectedOutfitController::class, 'storeOutfit']) ->name('outfit.save');
 
     Route::post('/save-item', [ItemController::class, 'store']);
 
@@ -51,3 +54,5 @@ Route::resource('tags', TagController::class)->except(['show'])->middleware('aut
 Route::put('/user/offset', [UserController::class, 'updateOffset'])->name('user.updateOffset');
 Route::post('/selected-outfits/add/{item}', [SelectedOutfitController::class, 'addItem'])->name('selected-outfits.add')->middleware('auth');
 Route::put('/selected-outfits/{selectedOutfit}/save-review', [SelectedOutfitController::class, 'saveReview'])->name('selected-outfits.save-review')->middleware('auth');
+
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
