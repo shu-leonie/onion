@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SelectedOutfitController;
+
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 Route::get('/', [RecommendationController::class, 'index'])->name('onion.home');

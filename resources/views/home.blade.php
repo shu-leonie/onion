@@ -24,15 +24,14 @@
         <div class="brand-content">
             <h1 class="onion-title">on¿on</h1>
             <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
-            <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
+
             @guest
             <div class="auth-buttons mt-4">
                 <a href="{{ route('login') }}" class="btn btn-primary me-2">Anmelden</a>
-                <a href="{{ route('register') }}" class="btn btn-success">Registrieren</a>
+                <a href="{{ route('register') }}" class="btn btn-primary me-2">Registrieren</a>
             </div>
             @endguest
-            <a href="{{ url('/profile') }}" class="anziehen-btn pc-only" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 15px;">ZUM PROFIL</a>
-        </div>
+            <a href="{{ url('/profile') }}" class="btn-primary large pc-only mt-3">ZUM PROFIL</a>
     </aside>
 
     <section class="main-configurator">
@@ -100,7 +99,7 @@
                 @endif
             @endforeach
         </form>
-        <button type="submit" form="outfit-form" class="anziehen-btn mobile-only">ANZIEHEN</button>
+        <button type="submit" form="outfit-form" class="btn-primary large mobile-only">ANZIEHEN</button>
     </section>
 
     <aside class="side-area info">
@@ -112,7 +111,7 @@
 
             <div class="city-search">
                 <input type="text" id="cityInput" placeholder="Ort eingeben">
-                <button class="weather-button" onclick="getWeatherByCity()">Ändern</button>
+                <button class="btn-primary" onclick="getWeatherByCity()">Ändern</button>
             </div>
             <p id="cityError" class="city-error"></p>
 
@@ -122,18 +121,18 @@
             </button>
             <p id="locationInfoText" style="font-size: 12px; margin-top: 5px; color: #666;"></p>
 
-            <div class="d-flex align-items-center gap-2 mt-3">
-                @if(isset($weather['apparentTemperature'][$current_time]))
-                    <h2 class="display-temp" id="temperatureText">{{ round($weather['apparentTemperature'][$current_time]) }}°</h2>
-                @endif
-                <div class="weather-icons">
-                    <img src="{{ asset('images/weather/' . ($weather['weather'][$current_time]['image'] ?? 'unknown.png')) }}" alt="Wetter Icon" class="weather-icon">
-                    @if(isset($weather['cloudCover'][$current_time]) && $weather['cloudCover'][$current_time] > 50)
-                        <i class="bi bi-cloud-fill overlap-cloud"></i>
-                    @endif
+            <div class="d-flex align-items-center gap-2">
+                    <h2 class="display-temp" id="temperatureText">
+                        {{ $weather['apparentTemperature'][$current_time] }}°
+                    </h2>
+                    <div class="weather-icons">
+                        <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}"
+                            class="weather-icon">
+                    </div>
                 </div>
-            </div>
-            <p class="condition" id="weatherInfoText">{{ $weather['weather'][$current_time]['description'] ?? '' }}</p>
+                <p class="condition" id="weatherInfoText">
+                    {{ $weather['weather'][$current_time]['description'] }}
+                </p>
         </div>
     </aside>
 

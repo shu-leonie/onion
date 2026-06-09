@@ -13,28 +13,36 @@
     <aside class="side-area branding">
         <div class="brand-content">
             <a href="/" class="back-to-config">← zurück zum outfit konfigurator</a>
-            
             <h1 class="onion-title">on¿on</h1>
-            
             <div class="user-greeting">
                 <p>hey <strong>{{ Auth::user()->name }}</strong>,<br>
                 schön dass du on¿on nutzt!</p>
             </div>
         </div>
         
-        <div class="profile-actions d-flex flex-column gap-3 mt-4" style="width: 100%; align-items: flex-end;">
-    
-            <a href="{{ route('settings') }}" class="side-pill text-center text-decoration-none">
-                Einstellungen
-            </a>
-            
-            <button type="button" class="side-pill border-0" data-bs-toggle="modal" data-bs-target="#uploadModal">
+        <div class="profile-actions d-flex flex-column gap-3 mt-4 w-100 align-items-end">
+        
+            <button type="button" class="btn-pill-white" data-bs-toggle="modal" data-bs-target="#uploadModal">
                 neues Item hinzufügen
             </button>
-            
-            <button type="button" class="side-pill border-0" data-bs-toggle="modal" data-bs-target="#addTagModal">
+
+            <button type="button" class="btn-pill-white" data-bs-toggle="modal" data-bs-target="#addTagModal">
                 Tag hinzufügen
             </button>
+
+            
+            
+            <a href="/user/profile" class="btn-pill-white text-center">
+                Einstellungen
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn-pill-white">
+                    Abmelden
+                </button>
+            </form> 
+
         </div>
     </aside>
 
@@ -59,16 +67,10 @@
                                     $path = str_replace('/storage/', '', $item->filepath ?? $item['filepath'] ?? '');
                                 @endphp
                                 
-                                <div class="closet-item flex-shrink-0" 
-                                     style="width: 140px; height: 140px; cursor: pointer; background: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 15px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"
-                                     onmouseover="this.style.transform='scale(1.05)'" 
-                                     onmouseout="this.style.transform='scale(1)'"
-                                     onclick="window.openEditItemModal({{ json_encode($item) }})">
-                                    
+                                <div class="closet-item flex-shrink-0" onclick="window.openEditItemModal({{ json_encode($item) }})">
                                     <img src="{{ asset($path) }}" 
-                                         alt="Kleidungsstück" 
-                                         style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;"
-                                         onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}'; console.log('Fehler bei Bildpfad:', '{{ asset($path) }}');">
+                                        alt="Kleidungsstück" 
+                                        onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
                                 </div>
                             @endforeach
                         </div>

@@ -1,10 +1,9 @@
 let editingItemId = null;
 const allTags = window.tags || [];
 
-// 1. WICHTIG: Funktion an 'window' hängen, damit Blade sie findet!
+
 window.openEditItemModal = function(item) {
     editingItemId = item.id;
-
     document.getElementById('editItemName').value = item.name;
 
     const tagContainer = document.getElementById('editItemTagSelection');
@@ -13,7 +12,6 @@ window.openEditItemModal = function(item) {
     allTags.forEach(function(tag) {
         let checked = '';
 
-        // Prüfen, ob das Item diesen Tag hat
         if (item.tags) {
             item.tags.forEach(function(itemTag) {
                 if (itemTag.id === tag.id) {
@@ -45,12 +43,13 @@ window.openEditItemModal = function(item) {
     const editItemCloudCoverRange = document.getElementById('editItemCloudCoverRange');
     const editItemWaterproofSwitch = document.getElementById('editItemWaterproofSwitch');
 
-    editItemTempMin.value = item.mintemp !== null ? item.mintemp : 0;
-    editItemTempMax.value = item.maxtemp !== null ? item.maxtemp : 10;
-    editItemUvMin.value = item.minuv !== null ? item.minuv : 1;
-    editItemUvMax.value = item.maxuv !== null ? item.maxuv : 7;
-    editItemCloudCoverRange.value = item.cloudcoverthreshold !== null ? item.cloudcoverthreshold : 50;
-    editItemWaterproofSwitch.checked = item.waterproof !== null ? item.waterproof : false;
+
+    editItemTempMin.value = item.min_temperature != null ? item.min_temperature : 0;
+    editItemTempMax.value = item.max_temperature != null ? item.max_temperature : 10;
+    editItemUvMin.value = item.min_uv_index != null ? item.min_uv_index : 1;
+    editItemUvMax.value = item.max_uv_index != null ? item.max_uv_index : 7;
+    editItemCloudCoverRange.value = item.cloud_cover_threshold != null ? item.cloud_cover_threshold : 50;
+    editItemWaterproofSwitch.checked = item.is_waterproof != null ? item.is_waterproof : false;
 
     document.getElementById('editItemRangeValueMinTemp').textContent = editItemTempMin.value;
     document.getElementById('editItemRangeValueMaxTemp').textContent = editItemTempMax.value;
@@ -65,37 +64,38 @@ window.openEditItemModal = function(item) {
     const editItemCloudRange = document.getElementById('editItemCloudRange');
     const editItemWaterproofness = document.getElementById('editItemWaterproofness');
 
-    if (item.mintemp === null) {
+
+    if (item.min_temperature == null) {
         editItemMinTempRange.classList.add('d-none');
     } else {
         editItemMinTempRange.classList.remove('d-none');
     }
 
-    if (item.maxtemp === null) {
+    if (item.max_temperature == null) {
         editItemMaxTempRange.classList.add('d-none');
     } else {
         editItemMaxTempRange.classList.remove('d-none');
     }
 
-    if (item.minuv === null ) {
+    if (item.min_uv_index == null ) {
         editItemMinUvRange.classList.add('d-none');
     } else {
         editItemMinUvRange.classList.remove('d-none');
     }
 
-    if (item.maxuv === null ) {
+    if (item.max_uv_index == null ) {
         editItemMaxUvRange.classList.add('d-none');
     } else {
         editItemMaxUvRange.classList.remove('d-none');
     }
 
-    if (item.cloudcoverthreshold === null) {
+    if (item.cloud_cover_threshold == null) {
         editItemCloudRange.classList.add('d-none');
     } else {
         editItemCloudRange.classList.remove('d-none');
     }
 
-    if (item.waterproof === null) {
+    if (item.is_waterproof == null) {
         editItemWaterproofness.classList.add('d-none');
     } else {
         editItemWaterproofness.classList.remove('d-none');
@@ -103,9 +103,10 @@ window.openEditItemModal = function(item) {
 
     const modal = new bootstrap.Modal(document.getElementById('editItemModal'));
     modal.show();
-};
+}
 
 document.addEventListener('DOMContentLoaded', function () {
+
 
     function connectRangeValue(rangeId, outputId) {
         const range = document.getElementById(rangeId);
@@ -134,9 +135,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function calculateCloudCoverImage() {
         const cloudDiv = document.getElementById('editItemCloudRange');
+        if(!cloudDiv) return;
         const cloudCoverSampleImage = cloudDiv.querySelector('img');
         const cloudCoverSlider = cloudDiv.querySelector('#editItemCloudCoverRange');
-        cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+        if(cloudCoverSampleImage && cloudCoverSlider) {
+            cloudCoverSampleImage.src = '/storage/cloud-examples/' + (parseInt(cloudCoverSlider.value / 10) * 10) + '.png';
+        }
     }
 
     connectRangeValue('editItemTempMin', 'editItemRangeValueMinTemp');
@@ -204,8 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
             editItemModalError.classList.add('d-none');
             modal.hide();
 
-            // Lädt die Seite neu, damit das upgedatete Item direkt korrekt im Profil angezeigt wird!
-            window.location.reload(); 
+
+            window.location.reload();
         });
     }
 });
