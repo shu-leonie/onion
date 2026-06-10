@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>on¿on - Konfigurator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
-    <script>
-        window.wardrobe_inventory = @json($recommendations);
-    </script>
-</head>
+@extends('layouts.app')
+@vite(['resources/js/home/geolocation.js', 'resources/js/home/get-weather.js'])
+<script>
+    window.wardrobe_inventory = @json($recommendations);
+</script>
 
 <body data-tags="{{ json_encode($tags) }}">
 
@@ -134,6 +124,7 @@
                     {{ $weather['weather'][$current_time]['description'] }}
                 </p>
         </div>
+    </aside>
 
             <div class="grid" id="tags">
          <p style="margin-top: 12px; font-weight: bold;"> Empfehlung nach Tags filtern: </p>

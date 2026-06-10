@@ -14,11 +14,12 @@ export default defineConfig({
                 'resources/css/profile/layout.css',
                 'resources/css/profile/components.css',
 
-                'resources/js/custom.js',
-                // 'resources/js/modal.js',
                 'resources/js/profile/create-item-modal.js',
                 'resources/js/profile/edit-item-modal.js',
                 'resources/js/profile/tag-modal.js',
+
+                'resources/js/home/geolocation.js',
+                'resources/js/home/get-weather.js'
             ],
 
             refresh: true,

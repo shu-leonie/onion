@@ -36,19 +36,24 @@ class RecommendationController extends Controller
 
         $location = $GeocodingService->reverse($latitude, $longitude);
         if (!$location) {
-            return response()->json(['error' => 'Standort konnte nicht bestimmt werden'], 500);
+            $location = ['display_name' => "Standort unbekannt"];
         } else if(isset($location['error']) && $location['error'] === 'Unable to geocode') {
-            $location['display_name'] = "Es konnte kein Ortsname gefunden werden.";
+            $location['display_name'] = "Standort unbekannt";
         }
         
         $weather = $weatherService->getWeather($latitude, $longitude);
+        //$weather=false;   Test für Fehlerseite
         if (!$weather) {
-            return response()->json(['error' => 'Keine Wetterdaten'], 500);
+            return view('error', [
+                'error_message' => 'Die Wetterdaten konnten derzeit nicht geladen werden. Bitte versuche es später erneut.'
+            ]);
         }
         
         $currentTime = $this->getCurrentHourIndex($weather['time']);
         if ($currentTime === -1) {
-            return response()->json(['error' => 'Zeit nicht gefunden'], 500);
+            return view('error', [
+                'error_message' => 'Die Wetterdaten konnten derzeit nicht verarbeitet werden. Bitte versuche es später erneut.'
+            ]);
         }
         if (Auth::guest()) {
             $kleidungsstuecke = collect([]); 

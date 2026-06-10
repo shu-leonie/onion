@@ -43,6 +43,7 @@ window.openEditItemModal = function(item) {
     const editItemUvMax = document.getElementById('editItemUvMax');
     const editItemCloudCoverRange = document.getElementById('editItemCloudCoverRange');
     const editItemWaterproofSwitch = document.getElementById('editItemWaterproofSwitch');
+    const editItemCategory = document.getElementById('editItemCategory');
 
 
     editItemTempMin.value = item.min_temperature != null ? item.min_temperature : 0;

@@ -9,12 +9,6 @@
         <p class="text-gray-600 mb-6">
             {{ $error_message }}
         </p>
-
-        <a href="/"
-           class="bg-black text-white px-4 py-2 rounded-lg">
-            Zurück
-        </a>
-
     </div>
 
 </div>
