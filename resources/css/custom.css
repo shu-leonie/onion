@@ -1,11 +1,104 @@
+
+/* VARIABLEN & GRUNDLAGEN
+*/
+:root {
+    --color-bg: #E3C4A8;
+    --color-primary: #D2A679;
+    --color-primary-hover: #c49668;
+    --color-text: #444444;
+    --color-white: #ffffff;
+    --color-shadow: rgba(0, 0, 0, 0.05);
+    --color-error: #7a2e2e;
+    
+    --radius-pill: 100px;
+    --radius-box: 35px;
+    --transition-smooth: all 0.2s ease;
+}
+
 body {
     font-family: 'Figtree', sans-serif;
-    background-color: #E3C4A8;
+    background-color: var(--color-bg);
     margin: 0;
-    color: #444;
+    color: var(--color-text);
     overflow-x: hidden;
 }
 
+[x-cloak] {
+    display: none;
+}
+
+.d-none {
+    display: none !important;
+}
+
+/* GLOBALE KOMPONENTEN (Buttons & Typo)
+*/
+.onion-title { 
+    font-size: 6rem; 
+    font-weight: 800; 
+    margin: 0; 
+    line-height: 0.8; 
+}
+
+.onion-subtitle { 
+    font-size: 2.2rem; 
+    font-weight: 300; 
+    margin-top: 20px; 
+    line-height: 1.1; 
+}
+
+/* Neuer Standard-Button (ersetzt anziehen-btn, weather-button, etc.) */
+.btn-primary {
+    background-color: var(--color-primary) !important; 
+    color: var(--color-white) !important;
+    border: none !important;
+    border-radius: 50px !important; 
+    padding: 10px 24px !important;
+    font-weight: 800 !important;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-primary.large {
+    padding: 15px 40px !important;
+    font-size: 1.5rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover) !important; 
+}
+
+/* Neuer Pillen-Button für Profil/Sidebar (ersetzt side-pill) */
+.btn-pill-white {
+    background-color: var(--color-white);
+    color: var(--color-text);
+    border: none;
+    padding: 12px 30px;
+    border-radius: var(--radius-pill);
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-decoration: none;
+    margin-bottom: 15px;
+    display: inline-block;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    transition: var(--transition-smooth);
+    width: fit-content;
+    cursor: pointer;
+}
+
+.btn-pill-white:hover {
+    background-color: #d42020;
+    color: var(--color-text);
+}
+
+/* LAYOUT & GRID
+*/
 .wrapper {
     display: grid;
     grid-template-columns: 1fr auto 1fr; 
@@ -21,20 +114,18 @@ body {
     position: sticky;
     top: 60px;
     height: fit-content;
+    display: flex;
+    flex-direction: column;
 }
 
 .side-area.branding {
-    display: flex;
-    flex-direction: column;
     align-items: flex-end;
-    text-align: right;   
+    text-align: right;
 }
 
 .side-area.info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Inhalt am linken Rand der rechten Spalte */
-    text-align: left;        /* Text linksbündig zur Pille hin */
+    align-items: flex-start;
+    text-align: left;
 }
 
 .main-configurator {
@@ -45,24 +136,11 @@ body {
     min-width: 600px;
 }
 
-.onion-title { /*"on¿on'*/
-    font-size: 6rem; 
-    font-weight: 800; 
-    margin: 0; 
-    line-height: 0.8; 
-}
-
-.onion-subtitle { /*was ziehst du heute an*/
-    font-size: 2.2rem; 
-    font-weight: 300; 
-    margin-top: 20px; 
-    line-height: 1.1; 
-}
-
-
-.outfit-capsule { /* die weißen pillen :)*/
-    background-color: #ffffff;
-    border-radius: 100px;
+/* KONFIGURATOR & OUTFIT CAPSULES
+*/
+.outfit-capsule {
+    background-color: var(--color-white);
+    border-radius: var(--radius-pill);
     width: 600px; 
     height: 180px;
     margin-bottom: 25px;
@@ -71,12 +149,11 @@ body {
     justify-content: center; 
     padding: 0 40px;
     position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px var(--color-shadow);
     box-sizing: border-box;
     overflow: visible; 
 }
 
-/*css für teile des outfits mit mehreren schichten - für 2 schichten muss ich das css noch schrieben...*/
 .layer-selection-grid {
     display: flex;
     justify-content: center;
@@ -93,18 +170,32 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: var(--transition-smooth);
     position: relative;
 }
 
-.layer-square[data-layer="upper_shirt"] { z-index: 1; }
-.layer-square[data-layer="upper_pulli"] { z-index: 2; }
-.layer-square[data-layer="upper_jacke"] { z-index: 3; }
+.layer-square[data-layer="upper_shirt"] {
+    z-index: 1;
+}
 
-.layer-selection-grid:hover .layer-square { margin: 0 -10px; }
-.layer-square:hover { transform: scale(1.15); z-index: 10 !important; }
+.layer-square[data-layer="upper_pulli"] {
+    z-index: 2;
+}
 
-.square-content { /*felder der items ->"buttons" :) */
+.layer-square[data-layer="upper_jacke"] {
+    z-index: 3;
+}
+
+.layer-selection-grid:hover .layer-square {
+    margin: 0 -10px;
+}
+
+.layer-square:hover {
+    transform: translateY(-5px);
+    z-index: 10 !important;
+}
+
+.square-content {
     width: 100%;
     height: 100%;
     display: flex;
@@ -112,17 +203,19 @@ body {
     justify-content: center;
 }
 
-.square-image { /*die bilder in den feldern selbst...*/
+.square-image {
     max-height: 85%;
     max-width: 100%;
     object-fit: contain;
     filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.25));
 }
 
-
 .layer-carousel-view {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between; 
@@ -140,16 +233,17 @@ body {
     height: 100%;
 }
 
-.item-main { width: 160px;
-    height: 160px; 
-    object-fit: 
-    contain; 
+.item-main {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
 }
-.item-side { 
-    width: 80px; 
-    height: 80px; 
-    opacity: 0.3; 
-    object-fit: contain; 
+
+.item-side {
+    width: 80px;
+    height: 80px;
+    opacity: 0.3;
+    object-fit: contain;
 }
 
 .shadow-aura {
@@ -157,160 +251,82 @@ body {
 }
 
 .nav-arrow {
-    background: none; border: none; font-size: 3rem; cursor: pointer; color: #333;
-    padding: 0; margin: 0;
+    background: none;
+    border: none;
+    font-size: 3rem;
+    cursor: pointer;
+    color: var(--color-text);
+    padding: 0;
+    margin: 0;
     transition: transform 0.2s;
 }
-.nav-arrow:hover { 
-    transform: scale(1.2); 
+
+.nav-arrow:hover {
+    transform: scale(1.2);
 }
 
+.main-item-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-.main-item-wrapper { 
-    position: relative; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; }
-
-.select-trigger-overlay { /*der haken :)*/
-    position: absolute; 
-    top: 0; left: 0;
-     width: 100%; 
-    height: 100%; z-index: 10;
+.select-trigger-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
 }
 
 .main-item-wrapper:hover::after {
     content: '\F272';
     font-family: 'bootstrap-icons';
     position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 3rem; color: rgba(255,255,255,0.7); pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
     z-index: 15;
 }
 
-/*wetter bereich :)*/
-.display-temp { 
-    font-size: 5rem; 
-    font-weight: 800; 
-    margin: 0; }
-.weather-icons { 
-    position: relative; 
-    font-size: 4rem; 
-    color: #FFD700; 
-    margin-top: 20px; }
-.overlap-cloud { 
-    position: absolute; 
-    right: -10px; 
-    bottom: -10px; 
-    color: #BDC3C7; 
-    font-size: 2.5rem; }
-
-.recommendation-box { 
-    margin-top: 20px; 
-    max-width: 250px; 
+/* WETTER & INFO BEREICH
+*/
+.display-temp {
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 0;
+    margin-top: 22px;
 }
 
-
-/* anziehen knopf...*/
-.anziehen-btn {
-    background-color: #D2A679; color: white; border: none;
-    padding: 15px 40px; border-radius: 40px; font-weight: 800;
-    font-size: 1.5rem; cursor: pointer; transition: all 0.2s;
-}
-.anziehen-btn:hover { 
-    background-color: #c49668; 
-    transform: scale(1.05); }
-
-.pc-only { 
-    margin-top: 30px; 
+.weather-icons {
+    position: relative;
+    font-size: 4rem;
+    color: #FFD700;
+    margin-top: 20px;
 }
 
-/* responsiveness... 
-leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
-@media (max-width: 1200px) {
-    .wrapper {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto 1fr; 
-        padding: 20px;
-        gap: 20px;
-    }
-
-    .side-area.branding {
-        grid-column: 1;
-        grid-row: 1;
-        position: static;
-        align-items: flex-start;
-        text-align: left;
-        padding-bottom: 0;
-    }
-
-
-    .side-area.info {
-        grid-column: 2;
-        grid-row: 1;
-        position: static;
-        display: flex !important;
-        align-items: flex-end;
-        text-align: right;
-        padding-bottom: 0;
-    } 
-
-    .main-configurator {
-        grid-column: 1 / span 2;
-        grid-row: 2;
-        width: 100%;
-        min-width: unset;
-        margin-top: 20px;
-    }
-
-    .outfit-category-capsule {
-        width: 100%;
-        height: 140px;
-        margin-bottom: 15px;
-    }
-
-    .onion-title { font-size: 3.5rem; }
-    .onion-subtitle { font-size: 1.2rem; }
-    .display-temp { font-size: 3rem; }
-    .pc-only { display: none !important; }
+.overlap-cloud {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    color: #BDC3C7;
+    font-size: 2.5rem;
 }
 
-@media (max-width: 768px) {
-    .mobile-only { 
-        display: block; 
-        width: 100%; 
-        margin: 20px 0 40px 0; 
-    }
+.weather-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
 }
 
-@media (max-width: 500px) {
-    .onion-subtitle, .weather-icons, .zip { display: none; }
-}
-
-.d-none { display: none !important; }
-
-
-.btn-primary,
-.btn-success {
-    background-color: #D2A679 !important; 
-    border: none !important;
-    border-radius: 50px !important; 
-    padding: 8px 20px !important;
-    color: white !important;
-    font-weight: bold !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
-}
-
-.btn-primary:hover,
-.btn-success:hover {
-    background-color: #c49668 !important; 
-    color: white !important;
-}
-
-
-.badge.bg-primary {
-    background-color:  #D2A679 !important; 
-    color: #333 !important; 
+.condition {
+    margin-top: -8px;
+    font-size: 18px;
 }
 
 .city-search {
@@ -330,153 +346,68 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     background-color: white;
 }
 
-.weather-button {
-    background-color: #d6a871;
-    border: none;
-    border-radius: 22px;
-    padding: 10px 24px;
-    color: white;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
+.city-error {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--color-error);
 }
 
 .location-link {
     margin-top: 8px;
     background: none;
     border: none;
-    color: #444;
+    color: var(--color-text);
     font-size: 14px;
     cursor: pointer;
     text-decoration: underline;
 }
 
-.display-temp {
-    margin-top: 22px;
+/* KLEIDERSCHRANK (Profil)
+*/
+.closet-header {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    align-self: flex-start;
+    margin-left: 0;
 }
 
-.condition {
-    margin-top: -8px;
-    font-size: 18px;
-}
-
-.city-error {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #7a2e2e;
-}
-
-.tag-delete-button {
-    border: none;
-    background: transparent;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0 2px;
-    line-height: 1;
-}
-
-.weather-icon {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-
-
-.review-btn {
-    font-size: 2.2rem;
-    font-weight: 300;
-    color: #444;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.closet-list {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    max-width: 450px;
-    cursor: pointer;
-    border: none;
-    height: 120px; 
-    background-color: white;
-}
-
-.review-btn:hover {
-    transform: scale(1.05);
-    background-color: #fcfcfc;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-    color: #111;
-    font-weight: 400;
-}
-
-.review-item {
-    width: 180px; 
-    height: 180px; 
-    object-fit: contain; 
-    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.3));
-    position: relative;
-}
-
-@media (max-width: 1200px) {
-    .outfit-display {
-        flex-direction: row !important;
-        flex-wrap: wrap;
-        margin-top: 40px;
-        justify-content: center;
-    }
-    .outfit-display div { margin-top: 0 !important; }
-    .review-item { margin-top: 0 !important; margin-left: -40px; }
-}
-
-.feedback-wrapper {
-    min-height: 100vh; 
-    text-align: center; 
-    padding-top: 80px;
-}
-
-.feedback-onion-img {
-    width: 700px; 
-    margin-bottom: 2rem; 
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.feedback-text {
-    color: #444; 
-    font-weight: 300; 
-    font-size: 2.2rem; 
-    max-width: 600px; 
-    padding: 0 20px;
-}
-
-@keyframes popIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
 }
 
 .closet-item {
-    width: 140px; 
-    height: 140px; 
-    cursor: pointer; 
+    width: 140px;
+    height: 140px;
+    cursor: pointer;
     background: white; 
-    border-radius: 50%; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-    padding: 10px;
-    display: flex; 
-    align-items: center; 
+    border-radius: 15px;
+    box-shadow: 0 4px 10px var(--color-shadow); 
+    padding: 15px;
+    display: flex;
+    align-items: center;
     justify-content: center; 
-    transition: transform 0.2s;
+    transition: var(--transition-smooth);
     overflow: hidden; 
 }
 
 .closet-item img {
     width: 100%;
     height: 100%;
-
-    object-fit: cover;
+    object-fit: contain;
     display: block;
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.2));
 }
 
-
+.closet-item:hover {
+    transform: scale(1.05);
+}
 
 .back-to-config {
     text-decoration: none;
-    color: #444;
+    color: var(--color-text);
     font-size: 0.9rem;
     font-weight: 300;
     margin-bottom: 10px;
@@ -499,92 +430,25 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     line-height: 1.2;
 }
 
-
-.side-pill {
-    background-color: #ffffff;
-    color: #444;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 100px;
-    font-weight: 800;
-    font-size: 1.1rem;
-    text-decoration: none;
-    margin-bottom: 15px;
-    display: inline-block;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    transition: transform 0.2s, background-color 0.2s;
-    width: fit-content;
-}
-
-.side-pill:hover {
-    background-color: #fcfcfc;
-    transform: scale(1.03);
-}
-
-
-.closet-header {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 40px;
-    align-self: flex-start; 
-    margin-left: 0;
-}
-
-
-.profile-capsule {
-    justify-content: space-between !important; 
-    padding: 0 60px !important; 
-    cursor: default;
-}
-
-.capsule-label {
-    font-size: 2.2rem;
-    font-weight: 300;
-    color: #444;
-}
-
-/* Das Bild in der Profil-Pille */
-.item-display {
-    width: 140px;
-    height: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.item-display img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-
-    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.2));
-}
-
-
-.closet-list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
+/* Zwiebel-Schichten Vorschau Profil */
 .outfit-preview {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     width: 100%;
-    gap: 15px; 
+    gap: 15px;
 }
 
 .category-group {
-    display: flex;          
+    display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     width: 100%;
 }
 
 .layer {
     width: 140px;
-    margin-left: -70px;    
+    margin-left: -70px;
     position: relative;
 }
 
@@ -592,62 +456,149 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     margin-left: 0;
 }
 
-.layer-head {
-    top: 0;
-}
-
-.layer-upper {
-    top: 90px;
-}
-
-.layer-lower {
-    top: 250px;
-}
-
-.layer-feet {
-    top: 430px;
-}
-
-.category-stack {
-    position: relative;
-    width: 250px;
+/* FEEDBACK & REVIEW
+*/
+.review-btn {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--color-text);
+    transition: var(--transition-smooth);
+    width: 100%;
+    max-width: 450px;
+    cursor: pointer;
+    border: none;
     height: 120px;
+    background-color: var(--color-white);
 }
 
-.category-stack img {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.review-btn:hover {
+    transform: scale(1.05);
+    background-color: #fcfcfc;
+    box-shadow: 0 15px 35px var(--color-shadow);
+    color: #111;
+    font-weight: 400;
 }
-
 
 .feedback-wrapper {
+    min-height: 100vh;
     display: flex !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    grid-column: 1 / -1; 
+    grid-column: 1 / -1;
     text-align: center;
     padding: 0px;
 }
 
-
 .feedback-onion-img {
-    width: 450px !important; 
+    width: 450px !important;
     height: auto;
     margin-bottom: 2rem;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .feedback-text-container {
     font-family: 'Figtree', sans-serif;
-    color: #444;
-    font-size: 1.5rem; 
+    color: var(--color-text);
+    font-size: 1.5rem;
     max-width: 500px;
 }
 
 .feedback-text-container small {
     font-size: 0.8rem;
-    color: #444;
+    color: var(--color-text);
     display: block;
     margin-top: 15px;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* RESPONSIVE DESIGN
+*/
+.pc-only {
+    margin-top: 30px;
+}
+
+@media (max-width: 1200px) {
+    .wrapper {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        padding: 20px;
+        gap: 20px;
+    }
+    
+    .side-area.branding {
+        grid-column: 1;
+        grid-row: 1;
+        position: static;
+        align-items: flex-start;
+        text-align: left;
+        padding-bottom: 0;
+    }
+    
+    .side-area.info {
+        grid-column: 2;
+        grid-row: 1;
+        position: static;
+        display: flex !important;
+        align-items: flex-end;
+        text-align: right;
+        padding-bottom: 0;
+    } 
+    
+    .main-configurator {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        width: 100%;
+        min-width: unset;
+        margin-top: 20px;
+    }
+    
+    .onion-title {
+        font-size: 3.5rem;
+    }
+    
+    .onion-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .display-temp {
+        font-size: 3rem;
+    }
+    
+    .pc-only {
+        display: none !important;
+    }
+    
+    .outfit-display {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        margin-top: 40px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+        width: 100%;
+        margin: 20px 0 40px 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .onion-subtitle, 
+    .weather-icons, 
+    .zip {
+        display: none;
+    }
 }

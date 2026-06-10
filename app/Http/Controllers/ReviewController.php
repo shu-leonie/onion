@@ -41,6 +41,8 @@ class ReviewController extends Controller
             return view('error', ['error_message' => "Anscheinend gibt es hier nichts zu reviewen :)"]);
         }
 
-        return view('review', ['items' => $items]);
+        return view('review', [
+            'items' => $items
+        ]);
     }
 }

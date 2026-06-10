@@ -24,15 +24,14 @@
         <div class="brand-content">
             <h1 class="onion-title">on¿on</h1>
             <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
-            <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
+
             @guest
             <div class="auth-buttons mt-4">
                 <a href="{{ route('login') }}" class="btn btn-primary me-2">Anmelden</a>
-                <a href="{{ route('register') }}" class="btn btn-success">Registrieren</a>
+                <a href="{{ route('register') }}" class="btn btn-primary me-2">Registrieren</a>
             </div>
             @endguest
-            <a href="{{ url('/profile') }}" class="anziehen-btn pc-only" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 15px;">ZUM PROFIL</a>
-        </div>
+            <a href="{{ url('/profile') }}" class="btn-primary large pc-only mt-3">ZUM PROFIL</a>
     </aside>
 
     <section class="main-configurator">
@@ -52,7 +51,7 @@
                 @php
                     $availableLayers = [];
                     foreach($layers as $l) {
-                        if(!empty($recommendations[$l])) {
+                        if(isset($recommendations[$l])) {
                             $availableLayers[] = $l;
                         }
                     }
@@ -100,7 +99,7 @@
                 @endif
             @endforeach
         </form>
-        <button type="submit" form="outfit-form" class="anziehen-btn mobile-only">ANZIEHEN</button>
+        <button type="submit" form="outfit-form" class="btn-primary large mobile-only">ANZIEHEN</button>
     </section>
 
     <aside class="side-area info">
@@ -112,7 +111,7 @@
 
             <div class="city-search">
                 <input type="text" id="cityInput" placeholder="Ort eingeben">
-                <button class="weather-button" onclick="getWeatherByCity()">Ändern</button>
+                <button class="btn-primary" onclick="getWeatherByCity()">Ändern</button>
             </div>
             <p id="cityError" class="city-error"></p>
 
@@ -122,22 +121,22 @@
             </button>
             <p id="locationInfoText" style="font-size: 12px; margin-top: 5px; color: #666;"></p>
 
-            <div class="d-flex align-items-center gap-2 mt-3">
-                @if(isset($weather['apparentTemperature'][$current_time]))
-                    <h2 class="display-temp" id="temperatureText">{{ round($weather['apparentTemperature'][$current_time]) }}°</h2>
-                @endif
-                <div class="weather-icons">
-                    <img src="{{ asset('images/weather/' . ($weather['weather'][$current_time]['image'] ?? 'unknown.png')) }}" alt="Wetter Icon" class="weather-icon">
-                    @if(isset($weather['cloudCover'][$current_time]) && $weather['cloudCover'][$current_time] > 50)
-                        <i class="bi bi-cloud-fill overlap-cloud"></i>
-                    @endif
+            <div class="d-flex align-items-center gap-2">
+                    <h2 class="display-temp" id="temperatureText">
+                        {{ $weather['apparentTemperature'][$current_time] }}°
+                    </h2>
+                    <div class="weather-icons">
+                        <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}"
+                            class="weather-icon">
+                    </div>
                 </div>
-            </div>
-            <p class="condition" id="weatherInfoText">{{ $weather['weather'][$current_time]['description'] ?? '' }}</p>
+                <p class="condition" id="weatherInfoText">
+                    {{ $weather['weather'][$current_time]['description'] }}
+                </p>
         </div>
-    </aside>
 
-    <div class="grid d-none" id="tags">
+            <div class="grid" id="tags">
+         <p style="margin-top: 12px; font-weight: bold;"> Empfehlung nach Tags filtern: </p>
         @foreach($tags as $tag)
         <div>
             <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" />
@@ -145,6 +144,9 @@
         </div>
         @endforeach
     </div>
+    </aside>
+
+
 </main>
 
 <div class="mt-2">
@@ -206,69 +208,174 @@ async function getWeatherByCity() {
 @php
     $jsInventory = [];
     foreach($recommendations as $cat => $items) {
-        if(!empty($items)) {
+        
+        if(empty($items)) {
+            $jsInventory[$cat] = [];
+        } else {
             $jsInventory[$cat] = array_map(function($item) {
+                $tagIds = [];
+                if (isset($item['tags'])) {
+                    foreach($item['tags'] as $t) {
+                        $tagIds[] = is_array($t) ? $t['id'] : $t->id;
+                    }
+                }
+
                 return [
                     'id' => $item['id'],
                     'img' => asset($item['img']), 
+                    'tags' => $tagIds
                 ];
             }, $items);
         }
     }
 @endphp
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const wardrobe_inventory = @json($jsInventory);
+    const original_inventory = @json($jsInventory);
+    let wardrobe_inventory = JSON.parse(JSON.stringify(original_inventory));
+    
     const active_selection_indices = {};
     
-    Object.keys(wardrobe_inventory).forEach(cat => {
+    Object.keys(original_inventory).forEach(cat => {
         active_selection_indices[cat] = 0;
     });
 
     let current_active_layer = null;
 
+    function getPlaceholderImage(category) {
+        const map = {
+            'head': 'kopfbedeckung',
+            'upper_shirt': 't-shirt',
+            'upper_pulli': 'pullover',
+            'upper_jacke': 'jacke',
+            'lower_pants': 'hose',
+            'lower_tights': 'strumpfhose',
+            'feet_socks': 'socken',
+            'feet_shoes': 'schuhe',
+            'hand': 'accessoires',
+            'sunglasses': 'sonnenbrille',
+            'sunscreen': 'sonnencreme'
+        };
+        
+        const fileName = map[category] || category;
+        return `/img/placeholders/platzhalter_${fileName}.png`; 
+    }
+
     function refresh_carousel_view(category_name) {
         const items = wardrobe_inventory[category_name] || [];
         const len = items.length;
-        if (len === 0) return;
-
-        const current = active_selection_indices[category_name];
-        const prev = (current - 1 + len) % len;
-        const next = (current + 1) % len;
 
         let capsule = null;
         const square = document.querySelector(`.layer-square[data-layer="${category_name}"]`);
 
         if (square) {
             capsule = square.closest('.outfit-capsule');
+        } else {
+            capsule = document.querySelector(`[data-category="${category_name}"]`);
+        }
+
+        if (!capsule) return;
+
+        const hasGrid = capsule.querySelector('.layer-selection-grid') !== null;
+        const input = document.getElementById(`input-${category_name}`);
+
+        const prevBtn = capsule.querySelector('.prev');
+        const nextBtn = capsule.querySelector('.next');
+        const prevImg = capsule.querySelector('.item-prev');
+        const nextImg = capsule.querySelector('.item-next');
+        const mainImg = capsule.querySelector('.item-main');
+
+
+        if (len === 0) {
+            const placeholderUrl = getPlaceholderImage(category_name);
+
+            if (square) {
+                const img_preview = square.querySelector('.square-image');
+                const plus = square.querySelector('.plus-icon');
+                
+                img_preview.src = placeholderUrl;
+                img_preview.classList.remove('d-none');
+                
+                if (plus) plus.classList.add('d-none');
+            }
+            if (!hasGrid || current_active_layer === category_name) {
+                if(mainImg) {
+                    mainImg.src = placeholderUrl;
+                    mainImg.classList.remove('d-none');
+                }
+                
+                if(prevImg) prevImg.classList.add('d-none');
+                if(nextImg) nextImg.classList.add('d-none');
+                if(prevBtn) prevBtn.classList.add('d-none');
+                if(nextBtn) nextBtn.classList.add('d-none');
+            }
+            
+            if (input) input.value = '';
+            return;
+        }
+
+        const current = active_selection_indices[category_name];
+        const prev = (current - 1 + len) % len;
+        const next = (current + 1) % len;
+
+        if (square) {
             const img_preview = square.querySelector('.square-image');
             const plus = square.querySelector('.plus-icon');
             img_preview.src = items[current].img;
             img_preview.classList.remove('d-none');
             if (plus) plus.classList.add('d-none');
-        } else {
-            capsule = document.querySelector(`[data-category="${category_name}"]`);
         }
 
-        if (capsule) {
-            const hasGrid = capsule.querySelector('.layer-selection-grid') !== null;
+        if (!hasGrid || current_active_layer === category_name) {
+            if(mainImg) mainImg.src = items[current].img;
             
-            if (!hasGrid || current_active_layer === category_name) {
-                const prevImg = capsule.querySelector('.item-prev');
-                const mainImg = capsule.querySelector('.item-main');
-                const nextImg = capsule.querySelector('.item-next');
-                if(prevImg) prevImg.src = items[prev].img;
-                if(mainImg) mainImg.src = items[current].img;
-                if(nextImg) nextImg.src = items[next].img;
+            if (len === 1) {
+                if(prevBtn) prevBtn.classList.add('d-none');
+                if(nextBtn) nextBtn.classList.add('d-none');
+                if(prevImg) prevImg.classList.add('d-none');
+                if(nextImg) nextImg.classList.add('d-none');
+            } else {
+                if(prevBtn) prevBtn.classList.remove('d-none');
+                if(nextBtn) nextBtn.classList.remove('d-none');
+                if(prevImg) {
+                    prevImg.classList.remove('d-none');
+                    prevImg.src = items[prev].img;
+                }
+                if(nextImg) {
+                    nextImg.classList.remove('d-none');
+                    nextImg.src = items[next].img;
+                }
             }
-
-            const input = document.getElementById(`input-${category_name}`);
-            if (input) input.value = items[current].id;
         }
+
+        if (input) input.value = items[current].id;
     }
 
     Object.keys(wardrobe_inventory).forEach(cat => refresh_carousel_view(cat));
+
+
+    function applyTagFilters() {
+
+        const selectedTags = Array.from(document.querySelectorAll('#tags input[type="checkbox"]:checked'))
+                                  .map(cb => parseInt(cb.value));
+
+        Object.keys(original_inventory).forEach(cat => {
+            if (selectedTags.length === 0) {
+
+                wardrobe_inventory[cat] = [...original_inventory[cat]];
+            } else {
+                wardrobe_inventory[cat] = original_inventory[cat].filter(item => {
+                    return selectedTags.some(tagId => item.tags.includes(tagId));
+                });
+            }
+            active_selection_indices[cat] = 0;
+            refresh_carousel_view(cat);
+        });
+    }
+
+    document.querySelectorAll('#tags input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyTagFilters);
+    });
 
     document.querySelectorAll('.layer-square').forEach(square => {
         square.addEventListener('click', () => {
@@ -291,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if(prevBtn) {
             prevBtn.addEventListener('click', () => {
                 const cat = hasGrid ? current_active_layer : base_cat;
-                if (!cat) return;
+                if (!cat || !wardrobe_inventory[cat] || wardrobe_inventory[cat].length === 0) return;
                 active_selection_indices[cat] = (active_selection_indices[cat] - 1 + wardrobe_inventory[cat].length) % wardrobe_inventory[cat].length;
                 refresh_carousel_view(cat);
             });
@@ -301,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if(nextBtn) {
             nextBtn.addEventListener('click', () => {
                 const cat = hasGrid ? current_active_layer : base_cat;
-                if (!cat) return;
+                if (!cat || !wardrobe_inventory[cat] || wardrobe_inventory[cat].length === 0) return;
                 active_selection_indices[cat] = (active_selection_indices[cat] + 1) % wardrobe_inventory[cat].length;
                 refresh_carousel_view(cat);
             });
@@ -310,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function () {
         capsule.addEventListener('wheel', (e) => {
             e.preventDefault();
             const cat = hasGrid ? current_active_layer : base_cat;
-            if (!cat) return;
+            if (!cat || !wardrobe_inventory[cat] || wardrobe_inventory[cat].length === 0) return;
 
             if (e.deltaY > 0 || e.deltaX > 0) {
                 active_selection_indices[cat] = (active_selection_indices[cat] + 1) % wardrobe_inventory[cat].length;
@@ -328,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
         capsule.addEventListener('touchend', (e) => {
             let touchEndX = e.changedTouches[0].screenX;
             const cat = hasGrid ? current_active_layer : base_cat;
-            if (!cat) return;
+            if (!cat || !wardrobe_inventory[cat] || wardrobe_inventory[cat].length === 0) return;
 
             if (touchStartX - touchEndX > 50) { 
                 active_selection_indices[cat] = (active_selection_indices[cat] + 1) % wardrobe_inventory[cat].length;
@@ -363,5 +470,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endsection
 </body>
-
 </html>
