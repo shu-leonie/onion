@@ -14,6 +14,7 @@ class UserController extends Controller
         $request->validate([
             'temperature_offset' => 'required|integer',
             'outfit_ids' => 'nullable|array',
+            'outfit_timestamp' => 'nullable|string',
         ]);
 
         try {
@@ -24,9 +25,21 @@ class UserController extends Controller
             ]);
 
             if ($request->has('outfit_ids')) {
-                SelectedOutfit::whereIn('id', $request->input('outfit_ids'))
-                    ->where('user_id', $user->id)
+
+                SelectedOutfit::where('user_id', $user->id)
+                    ->where('has_been_reviewed', false)
                     ->update(['has_been_reviewed' => true]);
+            }
+
+
+            $timestamp = $request->input('outfit_timestamp');
+            if ($timestamp) {
+                session()->forget("outfit_placeholders.{$timestamp}");
+                $unreviewed = session('unreviewed_placeholder_outfits', []);
+                if (($key = array_search($timestamp, $unreviewed)) !== false) {
+                    unset($unreviewed[$key]);
+                    session(['unreviewed_placeholder_outfits' => array_values($unreviewed)]);
+                }
             }
 
             if ($request->expectsJson()) {

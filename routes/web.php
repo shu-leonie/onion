@@ -11,6 +11,9 @@ use App\Http\Controllers\WeatherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/impressum', function () {
+    return view('impressum');
+})->name('impressum');
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 Route::get('/', [RecommendationController::class, 'index'])->name('onion.home');

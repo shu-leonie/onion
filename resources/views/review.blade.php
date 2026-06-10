@@ -28,6 +28,8 @@
             @method('PUT')
             <input type="hidden" name="temperature_offset" value="{{ $offset['value'] }}">
             
+            <input type="hidden" name="outfit_timestamp" value="{{ $outfit_timestamp ?? '' }}">
+            
             @foreach($items as $item)
                 <input type="hidden" name="outfit_ids[]" value="{{ $item['outfit_entry_id'] }}">
             @endforeach
@@ -37,7 +39,6 @@
             </button>
         </form>
         @endforeach
-        
     </section>
 
 <aside class="side-area info" style="align-items: center; justify-content: flex-start; padding-top: 20px;">
@@ -102,13 +103,24 @@
                 }
             }
 
-            if (empty($groups['upper'])) {
+            $hasShirt = collect($groups['upper'])->contains(function($item) {
+                return ($item['category']['name'] ?? '') === 'T-Shirt';
+            });
+            if (!$hasShirt) {
                 $groups['upper'][] = ['category' => ['name' => 'T-Shirt'], 'is_placeholder' => true];
             }
-            if (empty($groups['lower'])) {
+
+            $hasPants = collect($groups['lower'])->contains(function($item) {
+                return ($item['category']['name'] ?? '') === 'Hose';
+            });
+            if (!$hasPants) {
                 $groups['lower'][] = ['category' => ['name' => 'Hose'], 'is_placeholder' => true];
             }
-            if (empty($groups['feet'])) {
+
+            $hasShoes = collect($groups['feet'])->contains(function($item) {
+                return ($item['category']['name'] ?? '') === 'Schuhe';
+            });
+            if (!$hasShoes) {
                 $groups['feet'][] = ['category' => ['name' => 'Schuhe'], 'is_placeholder' => true];
             }
 

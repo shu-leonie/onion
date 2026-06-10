@@ -30,76 +30,52 @@ class SelectedOutfitController extends Controller
         ]);
     }*/
 
+
     public function storeOutfit(Request $request)
     {
         $request->validate([
             'item_ids' => 'required|array',
-            'item_ids.*' => 'exists:items,id',
         ]);
-        SelectedOutfit::where('user_id', auth()->id())
-            ->whereDate('created_at', now()->toDateString())
-            ->where(function($query) {
-                $query->where('has_been_reviewed', false)
-                      ->orWhere('has_been_reviewed', 0)
-                      ->orWhereNull('has_been_reviewed');
-            })
-            ->delete();
+
+
+
+        $now = now(); 
+        $timestampString = $now->toDateTimeString(); 
+        
+        $hasRealItems = false;
+        $placeholders = [];
 
         foreach ($request->input('item_ids') as $itemId) {
-            $outfit = new SelectedOutfit();
-            $outfit->user_id = auth()->id();
-            $outfit->item_id = $itemId;
-            $outfit->has_been_reviewed = 0;
-            $outfit->save();
+            if (is_numeric($itemId)) {
+                $outfit = new SelectedOutfit();
+                $outfit->user_id = auth()->id();
+                $outfit->item_id = $itemId;
+                $outfit->has_been_reviewed = 0;
+                
+
+                $outfit->created_at = $now;
+                $outfit->updated_at = $now;
+                $outfit->save();
+                $hasRealItems = true;
+            } else if (is_string($itemId) && str_starts_with($itemId, 'placeholder:')) {
+                $placeholders[] = str_replace('placeholder:', '', $itemId);
+            }
         }
 
+        if (!$hasRealItems) {
+            $timestampString = "placeholder_outfit_" . uniqid();
+            $unreviewedPlaceholders = session('unreviewed_placeholder_outfits', []);
+            $unreviewedPlaceholders[] = $timestampString;
+            session(['unreviewed_placeholder_outfits' => $unreviewedPlaceholders]);
+        }
+
+
+        session(["outfit_placeholders.{$timestampString}" => $placeholders]);
+
         return redirect()->route('outfit.review', [
-            'date' => now()->toDateString()
+            'date' => $now->toDateString(),
+            'timestamp' => $timestampString 
         ]);
     }
 
-    public function addItem(Item $item)
-    {
-        try {
-            SelectedOutfit::create([
-                'user_id' => auth()->id(),
-                'item_id' => $item->id,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Das Kleidungsstück wurde erfolgreich zum Outfit hinzugefügt.',
-                'item' => $item,
-                'item_id' => $item->id,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Beim Hinzufügen des Kleidungsstücks zum Outfit ist ein Fehler aufgetreten.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function saveReview(SelectedOutfit $selectedOutfit, bool $is_reviewed) //bool nicht boolean - php wirft sonst nen fehler...
-    {
-        try {
-            $selectedOutfit->has_been_reviewed = $is_reviewed;
-            $selectedOutfit->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Review wurde erfolgreich gespeichert.',
-                'selectedOutfit' => $selectedOutfit,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Beim Speichern des Reviews ist ein Fehler aufgetreten.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-
-        return redirect()->back()->with($status, $message);
-    }
 }
