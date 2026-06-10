@@ -124,7 +124,6 @@
                     {{ $weather['weather'][$current_time]['description'] }}
                 </p>
         </div>
-    </aside>
 
             <div class="grid" id="tags">
          <p style="margin-top: 12px; font-weight: bold;"> Empfehlung nach Tags filtern: </p>
