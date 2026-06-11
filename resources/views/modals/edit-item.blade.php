@@ -21,6 +21,7 @@
             <label class="form-label">Tags auswählen</label>
             <div id="editItemTagSelection" class="d-flex flex-wrap gap-2"></div>
           </div>
+          <input type="hidden" id="editItemCategory">
         </div>
 
         <div class="mt-3" id="editItemSpecialAttributes">

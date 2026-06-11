@@ -51,20 +51,20 @@ class WeatherController extends Controller
     }
 
     public function weatherByLocation(
-    Request $request,
-    WeatherService $weatherService,
-    GeocodingService $geocodingService
-) {
-    $lat = $request->query('lat');
-    $lon = $request->query('lon');
+        Request $request,
+        WeatherService $weatherService,
+        GeocodingService $geocodingService
+    ) {
+        $lat = $request->query('lat');
+        $lon = $request->query('lon');
 
-    $weatherData = $weatherService->getWeather($lat, $lon);
+        $weatherData = $weatherService->getWeather($lat, $lon);
 
-    $locationData = $geocodingService->reverse($lat, $lon);
+        $locationData = $geocodingService->reverse($lat, $lon);
 
-    return response()->json([
-        'city' => $locationData['display_name'] ?? 'Aktueller Standort',
-        'weather' => $weatherData,
-    ]);
-}
+        return response()->json([
+            'city' => $locationData['display_name'] ?? 'Aktueller Standort',
+            'weather' => $weatherData,
+        ]);
+    }
 }
