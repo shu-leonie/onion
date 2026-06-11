@@ -1,38 +1,27 @@
-  function filterItems(checkedTags) {
-        Object.values(window.wardrobe_inventory).forEach(category => {
-            category.forEach(item => {
-                const itemTags = item.tags || [];
-                if (checkedTags.length == 0) {
-                    item.hide = false;
-                    return;
-                }
+document.addEventListener('DOMContentLoaded', function () {
+    const tagCheckboxes = document.querySelectorAll('#tags input[type="checkbox"]');
+    
+    function applyTagFilters() {
+        const selectedTags = Array.from(document.querySelectorAll('#tags input[type="checkbox"]:checked'))
+                                  .map(cb => parseInt(cb.value));
+                                  
+        Object.keys(window.original_inventory).forEach(cat => {
+            if (selectedTags.length === 0) {
+                window.wardrobe_inventory[cat] = [...window.original_inventory[cat]];
+            } else {
+                window.wardrobe_inventory[cat] = window.original_inventory[cat].filter(item => {
+                
+                    return selectedTags.some(tagId => item.tags.includes(tagId));
+                });
+            }
 
-                const hasMatchingTags = itemTags.some(t => checkedTags.includes(t))
-                if(hasMatchingTags) {
-                    item.hide = false;
-                } else {
-                    item.hide = true;
-                }
-            })
+            window.active_selection_indices[cat] = 0;
+            
+            window.refresh_carousel_view(cat);
         });
     }
 
-    //Clicken von Filter-Tags. Muss aktuell hier sein da variablen von oben nur in dem scope existieren
-    const tagCheckboxes = document.querySelectorAll('#tags input[type="checkbox"]');
     tagCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            let checkedTags = 
-                Array.from(tagCheckboxes) // Convert checkboxes to an array to use filter and map.
-                .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
-                .map(i => i.value) // Use Array.map to extract only the checkbox values from the array of objects.
-            filterItems(checkedTags);
-
-            Object.keys(window.wardrobe_inventory).forEach(category => {
-                const currentIndex = window.active_selection_indices[category];
-                const newIndex = window.findNextVisibleIndex(category, currentIndex, +1);
-                window.active_selection_indices[category] = newIndex;
-
-                window.refresh_carousel_view(category);
-            });
-        })
+        checkbox.addEventListener('change', applyTagFilters);
     });
+});

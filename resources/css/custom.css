@@ -602,3 +602,9 @@ body {
         display: none;
     }
 }
+
+footer a.text-secondary, 
+footer span.text-secondary {
+    color:#444444 !important;
+    text-decoration: none;
+}

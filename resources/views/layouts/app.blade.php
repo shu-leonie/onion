@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>on¿on</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.bunny.net/css?family=figtree:300,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -16,9 +18,12 @@
 <body style="background-color: #E3C4A8; margin: 0; font-family: 'Figtree', sans-serif;">
     <main>
         @yield('content')
-    </main>
+</main>
+        </div>
 
-    @stack('modals')
-    @livewireScripts
-</body>
+        <x-footer />
+
+        @stack('modals')
+        @livewireScripts
+    </body>
 </html>

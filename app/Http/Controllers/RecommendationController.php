@@ -15,15 +15,19 @@ class RecommendationController extends Controller
 {
     public function index(WeatherService $weatherService, RecommendationService $recService, GeocodingService $GeocodingService, Request $request)
     {
-        $hasPendingOutfitToday = SelectedOutfit::where('user_id', auth()->id())
-            ->where('has_been_reviewed', false)
-            ->whereDate('created_at', today())
-            ->exists();
-            
-        if ($hasPendingOutfitToday) {
-            return redirect()->route('outfit.review', [
-                'date' => now()->toDateString()
-            ]);
+        if (Auth::check()) {
+            $hasPendingRealOutfit = SelectedOutfit::where('user_id', auth()->id())
+                ->where('has_been_reviewed', false)
+                ->exists(); 
+
+            $unreviewedPlaceholders = session('unreviewed_placeholder_outfits', []);
+            $hasPendingPlaceholder = !empty($unreviewedPlaceholders);
+
+            if ($hasPendingRealOutfit || $hasPendingPlaceholder) {
+                return redirect()->route('outfit.review', [
+                    'date' => now()->toDateString() 
+                ]);
+            }
         }
 
         if ($request->filled('latitude') && $request->filled('longitude')) {
@@ -55,8 +59,9 @@ class RecommendationController extends Controller
                 'error_message' => 'Die Wetterdaten konnten derzeit nicht verarbeitet werden. Bitte versuche es später erneut.'
             ]);
         }
+        
         if (Auth::guest()) {
-            $kleidungsstuecke = collect([]); 
+            $kleidungsstuecke = collect([]);
             $tags = collect([]);
         } else {
             $kleidungsstuecke = Item::with(['category', 'tags'])
@@ -89,19 +94,23 @@ class RecommendationController extends Controller
             ->values()
             ->toArray();
 
-        return view('home', [
-            'recommendations' => $recommendationsForFrontend,
-            'tags' => $tags,
-            'categories' => $categoryMap,
-            'weather' => $weather,
-            'current_time' => $currentTime,
-            'location' => $location['display_name']
-        ]);
+        return response()
+            ->view('home', [
+                'recommendations' => $recommendationsForFrontend,
+                'tags' => $tags,
+                'categories' => $categoryMap,
+                'weather' => $weather,
+                'current_time' => $currentTime,
+                'location' => $location['display_name']
+            ])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     private function getCurrentHourIndex($times)
     {
-        $currentHour = now()->format('Y-m-d\TH');
+        $currentHour = now()->setTimezone('Europe/Berlin')->format('Y-m-d\TH');
 
         foreach ($times as $index => $time) {
             if (str_starts_with($time, $currentHour)) {
@@ -111,8 +120,7 @@ class RecommendationController extends Controller
 
         return -1;
     }
-
-    //hab ne kelien logit für die platzhalter dazugebaut...
+    
     private function getNeededCategories($weather, $currentTime)
     {
         $temp = $weather['apparentTemperature'][$currentTime] ?? 15;
@@ -129,10 +137,12 @@ class RecommendationController extends Controller
             $needed[] = 'upper_jacke';
         }
         if ($temp < 5) {
-            $needed[] = 'head'; 
+            $needed[] = 'head';
+            $needed[] = 'hand'; 
         }
         if ($uv > 3) {
             $needed[] = 'sunglasses';
+            $needed[] = 'sunscreen'; 
         }
 
         return $needed;
