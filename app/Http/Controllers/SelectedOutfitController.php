@@ -10,35 +10,13 @@ use Illuminate\Http\Request;
 
 class SelectedOutfitController extends Controller
 {
-    /*public function storeOutfit(Request $request) //baut array von item ids zusammen uzm komplettes outfit zu speichern
-    {
-        $request->validate([
-            'item_ids' => 'required|array',
-            'item_ids.*' => 'exists:items,id',
-        ]);
-
-        foreach ($request->input('item_ids') as $itemId) {
-            SelectedOutfit::create([
-                'user_id' => auth()->id(),
-                'item_id' => $itemId,
-                'has_been_reviewed' => false,
-            ]);
-        }
-
-        return redirect()->route('outfit.review', [
-            'date' => now()->toDateString()
-        ]);
-    }*/
-
-
     public function storeOutfit(Request $request)
     {
         $request->validate([
             'item_ids' => 'required|array',
         ]);
 
-
-
+        
         $now = now(); 
         $timestampString = $now->toDateTimeString(); 
         

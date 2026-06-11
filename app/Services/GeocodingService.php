@@ -2,40 +2,54 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\ConnectionException;
 
 class GeocodingService
 {
     public function reverse($lat, $lon)
     {
-        $response = Http::withHeaders([
-            'User-Agent' => 'OnionApp/1.0'
-        ])->get('https://nominatim.openstreetmap.org/reverse', [
-            'lat' => $lat,
-            'lon' => $lon,
-            'format' => 'json',
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'OnionApp/1.0'
+            ])->get('https://nominatim.openstreetmap.org/reverse', [
+                'lat' => $lat,
+                'lon' => $lon,
+                'format' => 'json',
+            ]);
 
-        if ($response->failed()) {
+            if ($response->failed()) {
+                return null;
+            }
+
+            return $response->json();
+        } catch (ConnectionException $e) {
+            // Timeout / DNS / SSL / Netzwerkfehler
             return null;
         }
-
-        return $response->json();
+        
     }
 
     public function searchCity($city)
-{
-    $response = Http::withHeaders([
-        'User-Agent' => 'OnionApp/1.0'
-    ])->get('https://nominatim.openstreetmap.org/search', [
-        'q' => $city,
-        'format' => 'json',
-        'limit' => 1,
-    ]);
+    {
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'OnionApp/1.0'
+            ])->get('https://nominatim.openstreetmap.org/search', [
+                'q' => $city,
+                'format' => 'json',
+                'limit' => 1,
+            ]);
 
-    if ($response->failed()) {
-        return null;
+            if ($response->failed()) {
+                return null;
+            }
+
+            return $response->json();
+        } catch (ConnectionException $e) {
+            // Timeout / DNS / SSL / Netzwerkfehler
+            return null;
+        }
+
     }
 
-    return $response->json();
-}
 }
