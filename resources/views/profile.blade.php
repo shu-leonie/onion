@@ -12,10 +12,10 @@
     
     <aside class="side-area branding">
         <div class="brand-content">
-            <a href="/" class="back-to-config">← zurück zum outfit konfigurator</a>
+            <a href="/" class="back-to-config">← Zurück zum Outfit-Konfigurator</a>
             <h1 class="onion-title">on¿on</h1>
             <div class="user-greeting">
-                <p>hey <strong>{{ Auth::user()->name }}</strong>,<br>
+                <p>Hey <strong>{{ Auth::user()->name }}</strong>,<br>
                 schön dass du on¿on nutzt!</p>
             </div>
         </div>
@@ -23,7 +23,7 @@
         <div class="profile-actions d-flex flex-column gap-3 mt-4 w-100 align-items-end">
         
             <button type="button" class="btn-pill-white" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                neues Item hinzufügen
+                Neues Item hinzufügen
             </button>
 
             <button type="button" class="btn-pill-white" data-bs-toggle="modal" data-bs-target="#addTagModal">
@@ -92,6 +92,5 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@vite(['resources/js/modal.js'])
 
 @endsection

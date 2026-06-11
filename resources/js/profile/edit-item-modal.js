@@ -43,7 +43,6 @@ window.openEditItemModal = function(item) {
     const editItemUvMax = document.getElementById('editItemUvMax');
     const editItemCloudCoverRange = document.getElementById('editItemCloudCoverRange');
     const editItemWaterproofSwitch = document.getElementById('editItemWaterproofSwitch');
-    const editItemCategory = document.getElementById('editItemCategory');
 
 
     editItemTempMin.value = item.min_temperature != null ? item.min_temperature : 0;
@@ -53,11 +52,11 @@ window.openEditItemModal = function(item) {
     editItemCloudCoverRange.value = item.cloud_cover_threshold != null ? item.cloud_cover_threshold : 50;
     editItemWaterproofSwitch.checked = item.is_waterproof != null ? item.is_waterproof : false;
 
-    document.getElementById('editItemRangeValueMinTemp').textContent = editItemTempMin.value;
-    document.getElementById('editItemRangeValueMaxTemp').textContent = editItemTempMax.value;
-    document.getElementById('editItemRangeValueMinUv').textContent = editItemUvMin.value;
-    document.getElementById('editItemRangeValueMaxUv').textContent = editItemUvMax.value;
-    document.getElementById('editItemRangeValueClouds').textContent = editItemCloudCoverRange.value;
+    document.getElementById('editItemRangeValueMinTemp').value = editItemTempMin.value;
+    document.getElementById('editItemRangeValueMaxTemp').value = editItemTempMax.value;
+    document.getElementById('editItemRangeValueMinUv').value = editItemUvMin.value;
+    document.getElementById('editItemRangeValueMaxUv').value = editItemUvMax.value;
+    document.getElementById('editItemRangeValueClouds').value = editItemCloudCoverRange.value;
 
     const editItemMinUvRange = document.getElementById('editItemMinUvGroup');
     const editItemMaxUvRange = document.getElementById('editItemMaxUvGroup');
@@ -241,7 +240,5 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.reload();
         });
     }
-
-
     
 });

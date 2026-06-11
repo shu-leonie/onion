@@ -1,12 +1,5 @@
 @extends('layouts.app')
 @vite(['resources/js/home/geolocation.js', 'resources/js/home/get-weather.js'])
-<script>
-    window.wardrobe_inventory = @json($recommendations);
-</script>
-
-<body data-tags="{{ json_encode($tags) }}">
-
-@extends('layouts.app')
 
 @section('content')
 <main class="wrapper">
@@ -22,6 +15,7 @@
             </div>
             @endguest
             <a href="{{ url('/profile') }}" class="btn-primary large pc-only mt-3">ZUM PROFIL</a>
+        </div>
     </aside>
 
     <section class="main-configurator">
@@ -71,20 +65,19 @@
                             <input type="hidden" name="item_ids[]" id="input-{{ $availableLayers[0] }}">
                             <div class="layer-carousel-view w-100">
                         @endif
-                        
-                            <button type="button" class="nav-arrow prev"><i class="bi bi-chevron-left"></i></button>
-                            <div class="view-window position-relative flex-grow-1 d-flex justify-content-center">
-                                <img src="" class="item-side item-prev">
-                                <div class="main-item-wrapper">
-                                    <img src="" class="item-main shadow-aura">
-                                    @if(!$isSingle)
-                                        <div class="select-trigger-overlay"></div>
-                                    @endif
+                                <button type="button" class="nav-arrow prev"><i class="bi bi-chevron-left"></i></button>
+                                <div class="view-window position-relative flex-grow-1 d-flex justify-content-center">
+                                    <img src="" class="item-side item-prev">
+                                    <div class="main-item-wrapper">
+                                        <img src="" class="item-main shadow-aura">
+                                        @if(!$isSingle)
+                                            <div class="select-trigger-overlay"></div>
+                                        @endif
+                                    </div>
+                                    <img src="" class="item-side item-next">
                                 </div>
-                                <img src="" class="item-side item-next">
+                                <button type="button" class="nav-arrow next"><i class="bi bi-chevron-right"></i></button>
                             </div>
-                            <button type="button" class="nav-arrow next"><i class="bi bi-chevron-right"></i></button>
-                        </div>
                     </div>
                 @endif
             @endforeach
@@ -112,41 +105,33 @@
             <p id="locationInfoText" style="font-size: 12px; margin-top: 5px; color: #666;"></p>
 
             <div class="d-flex align-items-center gap-2">
-                    <h2 class="display-temp" id="temperatureText">
-                        {{ $weather['apparentTemperature'][$current_time] }}°
-                    </h2>
-                    <div class="weather-icons">
-                        <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}"
-                            class="weather-icon">
-                    </div>
+                <h2 class="display-temp" id="temperatureText">
+                    {{ $weather['apparentTemperature'][$current_time] }}°
+                </h2>
+                <div class="weather-icons">
+                    <img src="/storage/weather-images/{{ $weather['weather'][$current_time]['image'] }}" class="weather-icon">
                 </div>
-                <p class="condition" id="weatherInfoText">
-                    {{ $weather['weather'][$current_time]['description'] }}
-                </p>
+            </div>
+            <p class="condition" id="weatherInfoText">
+                {{ $weather['weather'][$current_time]['description'] }}
+            </p>
         </div>
 
-            <div class="grid" id="tags">
-         <p style="margin-top: 12px; font-weight: bold;"> Empfehlung nach Tags filtern: </p>
-        @foreach($tags as $tag)
-        <div>
-            <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" />
-            <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
+        @auth
+        <div class="grid" id="tags">
+            <p style="margin-top: 12px; font-weight: bold;"> Empfehlung nach Tags filtern: </p>
+            @foreach($tags as $tag)
+                <div>
+                    <input type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" />
+                    <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
+                </div>
+            @endforeach
         </div>
-        @endforeach
-    </div>
+        @endauth
     </aside>
 
 
 </main>
-
-<div class="mt-2">
-</div>
-
-<div class="mt-3">
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@vite(['resources/js/modal.js'])
 
 @php
     $jsInventory = [];
@@ -171,11 +156,10 @@
     }
 @endphp
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     window.original_inventory = @json($jsInventory);
     window.wardrobe_inventory = JSON.parse(JSON.stringify(window.original_inventory));
 </script>
 
 @endsection
-</body>
-</html>

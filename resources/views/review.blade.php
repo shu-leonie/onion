@@ -41,7 +41,7 @@
         @endforeach
     </section>
 
-<aside class="side-area info" style="align-items: center; justify-content: flex-start; padding-top: 20px;">
+    <aside class="side-area info" style="align-items: center; justify-content: flex-start; padding-top: 20px;">
 
         @php
             $groups = [

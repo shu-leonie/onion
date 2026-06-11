@@ -35,13 +35,19 @@
             <div class="flex items-center justify-end mt-4">
                 @if (Route::has('password.request'))
                     <a class="underline text-sm text-[#444] hover:text-[#D2A679] font-medium underline rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+                        {{ __('Passwort vergessen?') }}
                     </a>
                 @endif
 
                 <x-button class="ms-4">
                     {{ __('Log in') }}
                 </x-button>
+            </div>
+
+            <div class="mt-5 text-end">
+                <a href="{{ route('register') }}" class="underline text-sm text-[#444] hover:text-[#D2A679] font-medium underline rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Noch kein Konto? Registrieren
+                </a>
             </div>
         </form>
     </x-authentication-card>
