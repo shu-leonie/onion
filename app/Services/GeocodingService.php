@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 class GeocodingService
 {
@@ -10,7 +11,7 @@ class GeocodingService
     {
         try {
             $response = Http::withHeaders([
-                'User-Agent' => 'OnionApp/1.0'
+                'User-Agent' => 'OnionApp/1.0',
             ])->get('https://nominatim.openstreetmap.org/reverse', [
                 'lat' => $lat,
                 'lon' => $lon,
@@ -26,14 +27,14 @@ class GeocodingService
             // Timeout / DNS / SSL / Netzwerkfehler
             return null;
         }
-        
+
     }
 
     public function searchCity($city)
     {
         try {
             $response = Http::withHeaders([
-                'User-Agent' => 'OnionApp/1.0'
+                'User-Agent' => 'OnionApp/1.0',
             ])->get('https://nominatim.openstreetmap.org/search', [
                 'q' => $city,
                 'format' => 'json',
@@ -51,5 +52,4 @@ class GeocodingService
         }
 
     }
-
 }
